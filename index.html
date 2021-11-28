@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script
+      src="https://kit.fontawesome.com/57ba338bef.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>Les petits plats</title>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <img src="./logo.png" alt="Les petits plats" class="header__logo" />
+      </header>
+
+      <main>
+        <section class="search">
+          <form class="search__input" id="form">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette."
+              aria-label="Rechercher un ingrédient, appareil, ustensiles ou une recette."
+            />
+            <i class="fas fa-search"></i>
+          </form>
+        </section>
+
+        <section class="search__tags">
+          <div class="search__tags__ingredients"></div>
+          <div class="search__tags__appareils"></div>
+          <div class="search__tags__ustenciles"></div>
+        </section>
+
+        <section class="search__filter"></section>
+        <section class="result" id="result"></section>
+      </main>
+    </div>
+
+    <script src="./js/main.js" type="module"></script>
+  </body>
+</html>
