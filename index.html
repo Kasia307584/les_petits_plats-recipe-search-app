@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="./style.css" />
     <script
       src="https://kit.fontawesome.com/57ba338bef.js"
       crossorigin="anonymous"
@@ -18,8 +18,8 @@
       </header>
 
       <main>
-        <section class="search">
-          <form class="search__input" id="form">
+        <section class="search-global">
+          <form class="search-global__input">
             <input
               type="text"
               id="searchInput"
@@ -30,14 +30,15 @@
           </form>
         </section>
 
-        <section class="search__tags">
-          <div class="search__tags__ingredients"></div>
-          <div class="search__tags__appareils"></div>
-          <div class="search__tags__ustenciles"></div>
+        <section class="searched-filter"></section>
+
+        <section class="search-tag">
+          <div class="search-tag__ingredients"></div>
+          <div class="search-tag__appliance"></div>
+          <div class="search-tag__ustensils"></div>
         </section>
 
-        <section class="search__filter"></section>
-        <section class="result" id="result"></section>
+        <section class="cards"></section>
       </main>
     </div>
 
