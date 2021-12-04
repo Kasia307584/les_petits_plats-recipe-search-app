@@ -1,0 +1,149 @@
+/* General styling */
+body,
+html {
+  font-family: "Raleway", sans-serif;
+  max-width: 1440px;
+  margin: auto;
+}
+p,
+h2 {
+  margin: 0;
+}
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 1.5em 1em;
+  margin-right: 1em;
+  display: flex;
+  justify-content: space-between;
+  width: 150px;
+  color: white;
+}
+
+/* Header styling */
+header {
+  display: flex;
+  justify-content: center;
+}
+.header__logo {
+  height: 90px;
+  padding: 2em 0 1em 0;
+}
+
+/* Global search styling */
+.search-global__input {
+  display: flex;
+  justify-content: space-between;
+  background-color: #e6e3e3;
+  padding: 1em;
+  margin-bottom: 1.5em;
+  border-radius: 5px;
+}
+input {
+  border: none;
+  background-color: unset;
+  width: 70%;
+  outline: none;
+}
+.search-global__input i {
+  font-size: 1.4em;
+}
+
+/* Search by tag styling */
+.search-tag {
+  display: flex;
+  margin-bottom: 1.5em;
+}
+button input {
+  display: none;
+}
+.search-tag__ingredients,
+.search-tag__appliance,
+.search-tag__ustensils {
+  cursor: pointer;
+}
+.search-tag__ingredients {
+  background-color: rgb(84, 137, 252);
+}
+.search-tag__appliance {
+  background-color: rgb(114, 192, 147);
+}
+.search-tag__ustensils {
+  background-color: rgb(231, 86, 86);
+}
+i.fa-chevron-up {
+  display: none;
+}
+/* Show the input field and the dropdown menu (Ingredients) on focus */
+.search-tag__ingredients:focus #searchTagInput--ingredient {
+  display: block;
+}
+.search-tag__ingredients:focus #text {
+  display: none;
+}
+.search-tag__ingredients:focus .fa-chevron-down {
+  display: none;
+}
+.search-tag__ingredients:focus .fa-chevron-up {
+  display: inline-block;
+}
+
+/* Recipes styling */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.recipe {
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+  /* text-overflow: ellipsis;
+  white-space: nowrap; */
+  margin-bottom: 3em;
+  border-radius: 5px;
+}
+.image {
+  height: 50%;
+  background-color: rgb(196, 190, 190);
+}
+.text {
+  height: 50%;
+  padding: 1em;
+  background-color: #e6e3e3;
+}
+.recipe-header {
+  display: flex;
+  justify-content: space-between;
+}
+.time {
+  display: flex;
+  min-width: 90px;
+}
+.text h2,
+.time h2 {
+  font-weight: lighter;
+  font-size: 17px;
+}
+.time h2 {
+  font-weight: bolder;
+}
+.time i {
+  font-size: 1.1em;
+  padding: 0.1em 0.4em 0 0;
+}
+.recipe-core {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-top: 1em;
+}
+.recipe-core div:nth-child(1) {
+  flex-basis: 47%;
+}
+.recipe-core p:nth-child(2) {
+  flex-basis: 47%;
+}
+.ingredient__name {
+  font-weight: bold;
+}

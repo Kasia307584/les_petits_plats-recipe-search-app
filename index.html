@@ -23,8 +23,8 @@
             <input
               type="text"
               id="searchInput"
-              placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette."
-              aria-label="Rechercher un ingrédient, appareil, ustensiles ou une recette."
+              placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette"
+              aria-label="Rechercher un ingrédient, appareil, ustensiles ou une recette"
             />
             <i class="fas fa-search"></i>
           </form>
@@ -33,9 +33,39 @@
         <section class="searched-filter"></section>
 
         <section class="search-tag">
-          <div class="search-tag__ingredients"></div>
-          <div class="search-tag__appliance"></div>
-          <div class="search-tag__ustensils"></div>
+          <button class="search-tag__ingredients">
+            <span id="text">Ingrédients</span>
+            <input
+              type="text"
+              id="searchTagInput--ingredient"
+              placeholder="Rechercher un ingrédient"
+              aria-label="Rechercher un ingrédient"
+            /><i class="fas fa-chevron-down"></i
+            ><i class="fas fa-chevron-up"></i>
+          </button>
+          <div class="search-tag__ingredients__content"></div>
+          <button class="search-tag__appliance">
+            <span id="text">Appareil</span>
+            <input
+              type="text"
+              id="searchTagInput--apliance"
+              placeholder="Rechercher un appareil"
+              aria-label="Rechercher un appareil"
+            /><i class="fas fa-chevron-down"></i
+            ><i class="fas fa-chevron-up"></i>
+          </button>
+          <div class="search-tag__apliance__content"></div>
+          <button class="search-tag__ustensils">
+            <span id="text">Ustensiles</span>
+            <input
+              type="text"
+              id="searchTagInput--ustensil"
+              placeholder="Rechercher un ustensil"
+              aria-label="Rechercher un ustensil"
+            /><i class="fas fa-chevron-down"></i
+            ><i class="fas fa-chevron-up"></i>
+          </button>
+          <div class="search-tag__ustensils__content"></div>
         </section>
 
         <section class="cards"></section>
