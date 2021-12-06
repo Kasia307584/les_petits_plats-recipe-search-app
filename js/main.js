@@ -37,26 +37,6 @@ const createRecipeElem = (recipe) => {
 
 recipes.forEach((recipe) => createRecipeElem(recipe));
 
-let isOnScreen = false;
-
-const showRecipe = () => {
-  if (!isOnScreen) {
-    result.appendChild(recipeHtml);
-    isOnScreen = true;
-  }
-};
-
-const hideRecipe = () => {
-  if (isOnScreen) {
-    result.removeChild(recipeHtml);
-    isOnScreen = false;
-  }
-};
-
-const hideAllRecipes = () => {
-  recipes.forEach((recipe) => hideRecipe());
-};
-
 searchInputGlobal.addEventListener("keyup", (e) => {
   if (searchInput.validity.valid) {
     console.log("is valid");
@@ -65,14 +45,14 @@ searchInputGlobal.addEventListener("keyup", (e) => {
     console.log(inputGlobalValue);
 
     let include = true;
+    result.innerHTML = "";
     recipes.forEach((recipe) => {
       include =
         recipe.name.toLowerCase().includes(inputGlobalValue) ||
         recipe.description.toLowerCase().includes(inputGlobalValue);
       if (include === true) {
         console.log("ID recipe to show", recipe.id);
-        hideAllRecipes();
-        showRecipe();
+        createRecipeElem(recipe);
       }
     });
   }
