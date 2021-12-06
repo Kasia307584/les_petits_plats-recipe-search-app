@@ -1,15 +1,22 @@
 import { recipes } from "./recipes.js";
 
 const result = document.querySelector(".cards");
+const searchInputGlobal = document.getElementById("searchInput");
+
+let recipeHtml = "";
 
 const createRecipeElem = (recipe) => {
-  const recipeHtml = document.createElement("div");
+  recipeHtml = document.createElement("div");
   recipeHtml.classList.add("recipe");
 
   let pIngredients = "";
 
-  for (let ingredient of recipe["ingredients"]) {
-    pIngredients += `<div class="ingredient"><span class="ingredient__name">${ingredient.ingredient}:</span> ${ingredient.quantity} ${ingredient.unit}</div>`;
+  for (let ingredient of recipe.ingredients) {
+    pIngredients += `<div class="ingredient"><span class="ingredient__name">${
+      ingredient.ingredient
+    }:</span> ${ingredient.quantity ? ingredient.quantity : ""} ${
+      ingredient.unit ? ingredient.unit : ""
+    }</div>`;
   }
 
   recipeHtml.innerHTML = `<div class="image"></div>
@@ -24,8 +31,49 @@ const createRecipeElem = (recipe) => {
                             </div>
                           </div>`;
 
-  // return recipeHtml;
   result.appendChild(recipeHtml);
+  return recipeHtml;
 };
 
 recipes.forEach((recipe) => createRecipeElem(recipe));
+
+let isOnScreen = false;
+
+const showRecipe = () => {
+  if (!isOnScreen) {
+    result.appendChild(recipeHtml);
+    isOnScreen = true;
+  }
+};
+
+const hideRecipe = () => {
+  if (isOnScreen) {
+    result.removeChild(recipeHtml);
+    isOnScreen = false;
+  }
+};
+
+const hideAllRecipes = () => {
+  recipes.forEach((recipe) => hideRecipe());
+};
+
+searchInputGlobal.addEventListener("keyup", (e) => {
+  if (searchInput.validity.valid) {
+    console.log("is valid");
+
+    const inputGlobalValue = searchInputGlobal.value.toLowerCase();
+    console.log(inputGlobalValue);
+
+    let include = true;
+    recipes.forEach((recipe) => {
+      include =
+        recipe.name.toLowerCase().includes(inputGlobalValue) ||
+        recipe.description.toLowerCase().includes(inputGlobalValue);
+      if (include === true) {
+        console.log("ID recipe to show", recipe.id);
+        hideAllRecipes();
+        showRecipe();
+      }
+    });
+  }
+});
