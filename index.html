@@ -19,12 +19,11 @@
 
       <main>
         <section class="search-global">
-          <form class="search-global__input">
+          <form class="search-global-form">
             <input
               type="text"
-              id="searchInput"
+              id="search-global-input"
               placeholder="Rechercher un ingrédient, appareil, ustensiles ou une recette"
-              aria-label="Rechercher un ingrédient, appareil, ustensiles ou une recette"
               minlength="3"
             />
             <i class="fas fa-search"></i>
@@ -34,39 +33,36 @@
         <section class="searched-filter"></section>
 
         <section class="search-tag">
-          <button class="search-tag__ingredients">
-            <span id="text">Ingrédients</span>
+          <button class="search-tag-button__ingredients">
+            <span id="search-tag-title">Ingrédients</span>
             <input
               type="text"
-              id="searchTagInput--ingredient"
+              id="search-tag-input__ingredient"
               placeholder="Rechercher un ingrédient"
-              aria-label="Rechercher un ingrédient"
             /><i class="fas fa-chevron-down"></i
             ><i class="fas fa-chevron-up"></i>
           </button>
-          <div class="search-tag__ingredients__content"></div>
-          <button class="search-tag__appliance">
-            <span id="text">Appareil</span>
+          <div class="search-tag-content__ingredients"></div>
+          <button class="search-tag-button__appliance">
+            <span id="search-tag-title">Appareil</span>
             <input
               type="text"
-              id="searchTagInput--apliance"
+              id="search-tag-input__apliance"
               placeholder="Rechercher un appareil"
-              aria-label="Rechercher un appareil"
             /><i class="fas fa-chevron-down"></i
             ><i class="fas fa-chevron-up"></i>
           </button>
-          <div class="search-tag__apliance__content"></div>
-          <button class="search-tag__ustensils">
-            <span id="text">Ustensiles</span>
+          <div class="search-tag-content__apliance"></div>
+          <button class="search-tag-button__ustensils">
+            <span id="search-tag-title">Ustensiles</span>
             <input
               type="text"
-              id="searchTagInput--ustensil"
+              id="search-tag-input__ustensil"
               placeholder="Rechercher un ustensil"
-              aria-label="Rechercher un ustensil"
             /><i class="fas fa-chevron-down"></i
             ><i class="fas fa-chevron-up"></i>
           </button>
-          <div class="search-tag__ustensils__content"></div>
+          <div class="search-tag-content__ustensils"></div>
         </section>
 
         <section class="cards"></section>

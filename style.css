@@ -31,7 +31,7 @@ header {
 }
 
 /* Global search styling */
-.search-global__input {
+.search-global-form {
   display: flex;
   justify-content: space-between;
   background-color: #e6e3e3;
@@ -57,34 +57,34 @@ input {
 button input {
   display: none;
 }
-.search-tag__ingredients,
-.search-tag__appliance,
-.search-tag__ustensils {
+.search-tag-button__ingredients,
+.search-tag-button__appliance,
+.search-tag-button__ustensils {
   cursor: pointer;
 }
-.search-tag__ingredients {
+.search-tag-button__ingredients {
   background-color: rgb(84, 137, 252);
 }
-.search-tag__appliance {
+.search-tag-button__appliance {
   background-color: rgb(114, 192, 147);
 }
-.search-tag__ustensils {
+.search-tag-button__ustensils {
   background-color: rgb(231, 86, 86);
 }
 i.fa-chevron-up {
   display: none;
 }
 /* Show the input field and the dropdown menu (Ingredients) on focus */
-.search-tag__ingredients:focus #searchTagInput--ingredient {
+.search-tag-button__ingredients:focus #search-tag-input__ingredient {
   display: block;
 }
-.search-tag__ingredients:focus #text {
+.search-tag-button__ingredients:focus #search-tag-title {
   display: none;
 }
-.search-tag__ingredients:focus .fa-chevron-down {
+.search-tag-button__ingredients:focus .fa-chevron-down {
   display: none;
 }
-.search-tag__ingredients:focus .fa-chevron-up {
+.search-tag-button__ingredients:focus .fa-chevron-up {
   display: inline-block;
 }
 
