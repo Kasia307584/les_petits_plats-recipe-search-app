@@ -49,12 +49,15 @@ searchInputGlobal.addEventListener("keyup", (e) => {
 
     // empty the gallery
     result.innerHTML = "";
+
+    // initialise booleans
     let isIncluded = false;
+    let isAnyIncluded = [];
+    console.log("isAnyIncluded", isAnyIncluded);
 
     // loop through recipes
     recipes.forEach((recipe) => {
       let arrayOfBooleans = [];
-      console.log(recipe.id, arrayOfBooleans);
 
       // loop through ingredients
       recipe.ingredients.forEach((ingredient) => {
@@ -63,17 +66,53 @@ searchInputGlobal.addEventListener("keyup", (e) => {
         );
       });
 
+      // check if the input text is included in recipes
       isIncluded =
         recipe.name.toLowerCase().includes(inputGlobalValue) ||
         recipe.description.toLowerCase().includes(inputGlobalValue) ||
         arrayOfBooleans.some((item) => item === true);
 
-      console.log(arrayOfBooleans.some((item) => item === true));
+      console.log("isIncluded:", isIncluded);
 
+      // display the targeted recipe
       if (isIncluded === true) {
         console.log("ID recipe to show", recipe.id);
         createRecipeElem(recipe);
+        isAnyIncluded.push(isIncluded);
       }
     });
+    if (!isAnyIncluded.some((item) => item === true)) {
+      result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
+        chercher « tarte aux pommes », « poisson », etc.</p>`;
+    }
   }
 });
+
+const divListAppliance = document.querySelector(".search-tag-list__appliance");
+const inputAppliance = document.getElementById("search-tag-input__appliance");
+// divListAppliance.style.display = "none";
+
+inputAppliance.addEventListener("keyup", (e) => {
+  const appliances = recipes.map((recipe) => {
+    return recipe.appliance;
+  });
+  console.log(appliances);
+
+  const appliancesUniqueValues = [...new Set(appliances)];
+  console.log(appliancesUniqueValues);
+
+  let liTags = "";
+  appliancesUniqueValues.forEach((value) => {
+    liTags += `<li>${value}</li>`;
+  });
+
+  divListAppliance.innerHTML = `<ul>${liTags}</ul>`;
+  console.log(divListAppliance.innerHTML);
+
+  // divListAppliance.style.display = "block";
+});
+
+// const chevronAppliance = document.querySelector(".search-tag-button__appliance input");
+// chevronAppliance.addEventListener("click", (e) => {
+
+// });

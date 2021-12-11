@@ -18,6 +18,7 @@ button {
   justify-content: space-between;
   width: 150px;
   color: white;
+  font-size: 17px;
 }
 
 /* Header styling */
@@ -54,12 +55,34 @@ input {
   display: flex;
   margin-bottom: 1.5em;
 }
-button input {
-  display: none;
+button input:focus {
+  color: red;
 }
-.search-tag-button__ingredients,
-.search-tag-button__appliance,
-.search-tag-button__ustensils {
+.tag-wrapper {
+  flex-direction: column;
+}
+.tag-wrapper div:nth-child(n) {
+  /* height: 300px; */
+  /* width: 300px; */
+  position: absolute;
+  z-index: 10;
+  background-color: rgb(114, 192, 147);
+  color: white;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  /* display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 2em; */
+}
+.tag-wrapper div:nth-child(n) ul {
+  margin: 0;
+  padding: 0.5em;
+}
+.tag-wrapper div:nth-child(n) ul li {
+  list-style-type: none;
+  padding: 0.3em;
+}
+.tag-wrapper button:nth-child(n) {
   cursor: pointer;
 }
 .search-tag-button__ingredients {
@@ -74,6 +97,9 @@ button input {
 i.fa-chevron-up {
   display: none;
 }
+/* .search-tag-button__appliance:focus .search-tag-list__appliance {
+  display: block;
+} */
 /* Show the input field and the dropdown menu (Ingredients) on focus */
 .search-tag-button__ingredients:focus #search-tag-input__ingredient {
   display: block;
