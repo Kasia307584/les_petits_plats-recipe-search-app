@@ -1,9 +1,10 @@
 import { recipes } from "./recipes.js";
 
+// global variables
 const result = document.querySelector(".cards");
 const searchInputGlobal = document.getElementById("search-global-input");
 
-// function which creates HTML
+// function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
   let recipeHtml = document.createElement("div");
   recipeHtml.classList.add("recipe");
@@ -37,6 +38,9 @@ const createRecipeElem = (recipe) => {
 // display recipes
 recipes.forEach((recipe) => createRecipeElem(recipe));
 
+let idsDisplayedRecipe = [];
+console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+
 // listen to the input in the global search and sort recipes corresponding to that input
 searchInputGlobal.addEventListener("keyup", (e) => {
   // check if at least 3 characters have been entred in the input field
@@ -52,12 +56,12 @@ searchInputGlobal.addEventListener("keyup", (e) => {
 
     // initialise booleans
     let isIncluded = false;
-    let isAnyIncluded = [];
+    let isAnyIncluded = []; // booleans true if value included in the recipe
     console.log("isAnyIncluded", isAnyIncluded);
 
     // loop through recipes
     recipes.forEach((recipe) => {
-      let arrayOfBooleans = [];
+      let arrayOfBooleans = []; // booleans true/false depending if value included in ingredients
 
       // loop through ingredients
       recipe.ingredients.forEach((ingredient) => {
@@ -79,6 +83,7 @@ searchInputGlobal.addEventListener("keyup", (e) => {
         console.log("ID recipe to show", recipe.id);
         createRecipeElem(recipe);
         isAnyIncluded.push(isIncluded);
+        idsDisplayedRecipe.push(recipe.id);
       }
     });
     if (!isAnyIncluded.some((item) => item === true)) {
@@ -90,29 +95,54 @@ searchInputGlobal.addEventListener("keyup", (e) => {
 
 const divListAppliance = document.querySelector(".search-tag-list__appliance");
 const inputAppliance = document.getElementById("search-tag-input__appliance");
-// divListAppliance.style.display = "none";
 
-inputAppliance.addEventListener("keyup", (e) => {
-  const appliances = recipes.map((recipe) => {
-    return recipe.appliance;
-  });
-  console.log(appliances);
+// const appliances = recipes.map((recipe) => recipe.appliance);
+// console.log(appliances);
 
-  const appliancesUniqueValues = [...new Set(appliances)];
-  console.log(appliancesUniqueValues);
+// const appliancesUniqueValues = [...new Set(appliances)];
+// console.log(appliancesUniqueValues);
 
-  let liTags = "";
-  appliancesUniqueValues.forEach((value) => {
-    liTags += `<li>${value}</li>`;
-  });
+// const appliancesDisplayed = (id) => {
+//   if (id === recipe.id) {
+//     console.log(recipe.appliance);
+//     appliancesUniqueValues.includes(recipe.appliance);
+//   }
+// };
 
-  divListAppliance.innerHTML = `<ul>${liTags}</ul>`;
-  console.log(divListAppliance.innerHTML);
+// idsDisplayedRecipe.forEach((id) => appliancesDisplayed(id));
 
-  // divListAppliance.style.display = "block";
-});
+// const createHtml = () => {
+//   divListAppliance.innerHTML = "";
+
+//   let liTags = "";
+//   appliancesUniqueValues.forEach((value) => {
+//     liTags += `<li>${value}</li>`;
+//   });
+
+//   divListAppliance.innerHTML = `<ul>${liTags}</ul>`;
+//   console.log(divListAppliance.innerHTML);
+// };
+
+// inputAppliance.addEventListener("keyup", (e) => {
+//   createHtml();
+// });
 
 // const chevronAppliance = document.querySelector(".search-tag-button__appliance input");
 // chevronAppliance.addEventListener("click", (e) => {
 
 // });
+
+console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+
+let applianceIncluded = [];
+console.log(applianceIncluded);
+let includes = false;
+console.log(includes);
+
+recipes.forEach((recipe) => {
+  includes = idsDisplayedRecipe.includes(recipe.id);
+  if (includes) {
+    console.log(recipe.id, recipe.appliance);
+    applianceIncluded.push(recipe.appliance);
+  }
+});
