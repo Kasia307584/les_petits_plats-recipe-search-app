@@ -41,7 +41,7 @@ recipes.forEach((recipe) => createRecipeElem(recipe));
 let idsDisplayedRecipe = [];
 console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
-// listen to the input in the global search and sort recipes corresponding to that input
+// listen to input in the global search and display corresponding recipes
 searchInputGlobal.addEventListener("keyup", (e) => {
   // check if at least 3 characters have been entred in the input field
   if (searchInputGlobal.validity.valid) {
@@ -95,6 +95,9 @@ searchInputGlobal.addEventListener("keyup", (e) => {
 
 const divListAppliance = document.querySelector(".search-tag-list__appliance");
 const inputAppliance = document.getElementById("search-tag-input__appliance");
+const chevronAppliance = document.querySelector(
+  ".search-tag-button__appliance i.fa-chevron-down"
+);
 
 // const appliances = recipes.map((recipe) => recipe.appliance);
 // console.log(appliances);
@@ -111,29 +114,9 @@ const inputAppliance = document.getElementById("search-tag-input__appliance");
 
 // idsDisplayedRecipe.forEach((id) => appliancesDisplayed(id));
 
-// const createHtml = () => {
-//   divListAppliance.innerHTML = "";
-
-//   let liTags = "";
-//   appliancesUniqueValues.forEach((value) => {
-//     liTags += `<li>${value}</li>`;
-//   });
-
-//   divListAppliance.innerHTML = `<ul>${liTags}</ul>`;
-//   console.log(divListAppliance.innerHTML);
-// };
-
-// inputAppliance.addEventListener("keyup", (e) => {
-//   createHtml();
-// });
-
-// const chevronAppliance = document.querySelector(".search-tag-button__appliance input");
-// chevronAppliance.addEventListener("click", (e) => {
-
-// });
-
 console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
+// trial to extract into an array, appliance tags included in currently displayed recipes
 let applianceIncluded = [];
 console.log(applianceIncluded);
 let includes = false;
@@ -144,5 +127,69 @@ recipes.forEach((recipe) => {
   if (includes) {
     console.log(recipe.id, recipe.appliance);
     applianceIncluded.push(recipe.appliance);
+  }
+});
+
+// creation of test array (because the above trial doesnt work)
+let applianceIncludedTest = ["four", "blender", "saladier"];
+
+// function which displays appliance tags (included in currently displayed recipes)
+const displayTagsAppliance = (applianceList, parentElem) => {
+  parentElem.innerHTML = "";
+
+  let liTags = "";
+  applianceList.forEach((value) => {
+    liTags += `<li>${value}</li>`;
+  });
+
+  parentElem.innerHTML = `<ul>${liTags}</ul>`;
+};
+
+// listen to click and display appliance tags (included in currently displayed recipes)
+inputAppliance.addEventListener("click", (e) => {
+  displayTagsAppliance(applianceIncludedTest, divListAppliance);
+});
+
+// listen to click and display appliance tags (included in currently displayed recipes)
+chevronAppliance.addEventListener("click", (e) => {
+  displayTagsAppliance(applianceIncludedTest, divListAppliance);
+});
+
+// listen to input in the appliance search and display corresponding recipes and filtered tags
+inputAppliance.addEventListener("keyup", (e) => {
+  if (inputAppliance.validity.valid) {
+    // get the user's input value
+    const inputApplianceValue = inputAppliance.value.toLowerCase();
+    console.log(inputApplianceValue);
+
+    // empty the gallery
+    result.innerHTML = "";
+
+    // initialise booleans
+    let isApplianceIncluded = false;
+    let isAnyApplianceIncluded = []; // booleans true if value included in the recipe
+    console.log("isAnyApplianceIncluded", isAnyApplianceIncluded);
+
+    // loop through recipes
+    recipes.forEach((recipe) => {
+      // check if the input text is included in recipes
+      isApplianceIncluded = recipe.appliance // recipe.appliance doit être restreint appliances contenus dans les recettes affichées
+        .toLowerCase()
+        .includes(inputApplianceValue);
+      console.log("isApplianceIncluded:", isApplianceIncluded);
+
+      // display the targeted recipe
+      if (isApplianceIncluded === true) {
+        console.log("ID recipe to show", recipe.id);
+        createRecipeElem(recipe);
+        isAnyApplianceIncluded.push(isApplianceIncluded);
+        idsDisplayedRecipe.push(recipe.id); // je dois d'abord la vider ?
+        // applianceIncluded.push(recipe.appliance) -> dois je faire ça + d'abord la vider ?
+      }
+    });
+    if (!isAnyApplianceIncluded.some((item) => item === true)) {
+      result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
+         chercher « tarte aux pommes », « poisson », etc.</p>`;
+    }
   }
 });
