@@ -90,7 +90,7 @@ searchInputGlobal.addEventListener("keyup", (e) => {
       console.log("isIncluded:", isIncluded);
 
       // display the targeted recipes and stock ids of displayed recipes
-      if (isIncluded === true) {
+      if (isIncluded) {
         console.log("ID recipe to show", recipe.id);
         createRecipeElem(recipe);
         isAnyIncluded.push(isIncluded);
@@ -142,9 +142,29 @@ inputAppliance.addEventListener("click", (e) => {
     "div.search-tag-list__appliance ul li"
   );
 
+  let tempIds = [];
+
   divListApplianceLi.forEach((li) => {
-    console.log("check");
-    li.addEventListener("click", (e) => console.log("I got it!"));
+    li.addEventListener("click", (e) => {
+      console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+      let clickedTag = e.target.textContent;
+      console.log(clickedTag);
+      result.innerHTML = "";
+
+      recipes.forEach((recipe) => {
+        if (
+          idsDisplayedRecipe.includes(recipe.id) &&
+          recipe.appliance === clickedTag
+        ) {
+          createRecipeElem(recipe);
+          tempIds.push(recipe.id);
+        }
+      });
+      idsDisplayedRecipe = tempIds;
+      console.log(idsDisplayedRecipe);
+
+      createLiTags(extractIncludedTags(), divListAppliance);
+    });
   });
 });
 
@@ -171,7 +191,7 @@ inputAppliance.addEventListener("keyup", (e) => {
 
     console.log("isAnyApplianceIncluded", isAnyApplianceIncluded);
     console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-    console.log("tempIdsDisplayedRecipe", tempIdsDisplayedRecipe);
+    console.log("tempIdsDisplayedRecipe", tempIds);
 
     // loop through recipes
     recipes.forEach((recipe) => {
