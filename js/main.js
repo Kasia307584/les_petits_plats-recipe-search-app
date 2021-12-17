@@ -3,6 +3,12 @@ import { recipes } from "./recipes.js";
 // global variables
 const result = document.querySelector(".cards");
 const searchInputGlobal = document.getElementById("search-global-input");
+const divListAppliance = document.querySelector(".search-tag-list__appliance");
+const inputAppliance = document.getElementById("search-tag-input__appliance");
+const chevronAppliance = document.querySelector(
+  ".search-tag-button__appliance i.fa-chevron-down"
+);
+let divListApplianceLi = null;
 
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
@@ -37,14 +43,14 @@ const createRecipeElem = (recipe) => {
 
 let idsDisplayedRecipe = [];
 
-// display recipes
+// display recipes and stock ids of displayed recipes
 recipes.forEach((recipe) => {
   createRecipeElem(recipe);
   idsDisplayedRecipe.push(recipe.id);
 });
 console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
-// listen to input in the global search and display corresponding recipes
+// register keyup event on the global search input -> display corresponding recipes
 searchInputGlobal.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
   if (searchInputGlobal.validity.valid) {
@@ -83,7 +89,7 @@ searchInputGlobal.addEventListener("keyup", (e) => {
 
       console.log("isIncluded:", isIncluded);
 
-      // display the targeted recipe
+      // display the targeted recipes and stock ids of displayed recipes
       if (isIncluded === true) {
         console.log("ID recipe to show", recipe.id);
         createRecipeElem(recipe);
@@ -91,7 +97,7 @@ searchInputGlobal.addEventListener("keyup", (e) => {
         idsDisplayedRecipe.push(recipe.id);
       }
     });
-    // if there isn't any recipe which includes the input value then display the message
+    // display a message when there isn't any recipe which includes the input value
     if (!isAnyIncluded.some((item) => item === true)) {
       result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
         chercher « tarte aux pommes », « poisson », etc.</p>`;
@@ -99,13 +105,7 @@ searchInputGlobal.addEventListener("keyup", (e) => {
   }
 });
 
-const divListAppliance = document.querySelector(".search-tag-list__appliance");
-const inputAppliance = document.getElementById("search-tag-input__appliance");
-const chevronAppliance = document.querySelector(
-  ".search-tag-button__appliance i.fa-chevron-down"
-);
-
-// function which extracts into array appliance tags included in currently displayed recipes
+// function which extracts appliance tags (included in currently displayed recipes) into an array
 const extractIncludedTags = () => {
   let includedTags = [];
 
@@ -122,7 +122,7 @@ const extractIncludedTags = () => {
 };
 
 // function which displays tags
-const displayTags = (tagList, parentElem) => {
+const createLiTags = (tagList, parentElem) => {
   parentElem.innerHTML = "";
 
   let liTags = "";
@@ -133,17 +133,27 @@ const displayTags = (tagList, parentElem) => {
   parentElem.innerHTML = `<ul>${liTags}</ul>`;
 };
 
-// listen to click and display appliance tags (included in currently displayed recipes)
+// register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
+// and register event click on each tag -> (which will display the corresponding recipes and appliance tags (included in those recipes))
 inputAppliance.addEventListener("click", (e) => {
-  displayTags(extractIncludedTags(), divListAppliance);
+  createLiTags(extractIncludedTags(), divListAppliance);
+
+  divListApplianceLi = document.querySelectorAll(
+    "div.search-tag-list__appliance ul li"
+  );
+
+  divListApplianceLi.forEach((li) => {
+    console.log("check");
+    li.addEventListener("click", (e) => console.log("I got it!"));
+  });
 });
 
-// listen to click and display appliance tags (included in currently displayed recipes)
+// register click event on the appliance chevron icon -> display appliance tags (included in currently displayed recipes)
 chevronAppliance.addEventListener("click", (e) => {
-  displayTags(extractIncludedTags(), divListAppliance);
+  createLiTags(extractIncludedTags(), divListAppliance);
 });
 
-// listen to input in the appliance search and display corresponding recipes and filtered tags
+// register keyup event on the appliance search input -> display corresponding recipes and filtered tags
 inputAppliance.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
   if (inputAppliance.validity.valid) {
@@ -154,12 +164,14 @@ inputAppliance.addEventListener("keyup", (e) => {
     // empty the gallery
     result.innerHTML = "";
 
-    // initialise booleans
+    // initialise variables
     let isApplianceIncluded = false;
     let isAnyApplianceIncluded = []; // booleans true if value included in the recipe
-    console.log("isAnyApplianceIncluded", isAnyApplianceIncluded);
+    let tempIds = []; // temporary variable
 
+    console.log("isAnyApplianceIncluded", isAnyApplianceIncluded);
     console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+    console.log("tempIdsDisplayedRecipe", tempIdsDisplayedRecipe);
 
     // loop through recipes
     recipes.forEach((recipe) => {
@@ -167,21 +179,19 @@ inputAppliance.addEventListener("keyup", (e) => {
         .toLowerCase()
         .includes(inputApplianceValue);
 
-      // display the targeted recipe
-      if (isApplianceIncluded === true) {
-        if (idsDisplayedRecipe.includes(recipe.id)) {
-          console.log("ID recipe to show", recipe.id);
-          createRecipeElem(recipe);
-          idsDisplayedRecipe = [];
-          idsDisplayedRecipe.push(recipe.id);
-          isAnyApplianceIncluded.push(idsDisplayedRecipe.includes(recipe.id));
-        }
+      // display the targeted recipe and stock ids of displayed recipes
+      if (isApplianceIncluded && idsDisplayedRecipe.includes(recipe.id)) {
+        console.log("ID recipe to show", recipe.id);
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+        isAnyApplianceIncluded.push(idsDisplayedRecipe.includes(recipe.id));
       }
     });
+    idsDisplayedRecipe = tempIds;
     console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
-    //display the targeted tags
-    displayTags(extractIncludedTags(), divListAppliance);
+    // display the targeted tags
+    createLiTags(extractIncludedTags(), divListAppliance);
 
     // if there isn't any recipe which includes the input value then display the message
     if (!isAnyApplianceIncluded.some((item) => item === true)) {
