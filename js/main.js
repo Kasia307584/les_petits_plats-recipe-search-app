@@ -9,6 +9,9 @@ const chevronAppliance = document.querySelector(
   ".search-tag-button__appliance i.fa-chevron-down"
 );
 let divListApplianceLi = null;
+const divFilteredList = document.querySelector(
+  ".searched-filter .filtered-wrapper ul"
+);
 
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
@@ -121,7 +124,7 @@ const extractIncludedTags = () => {
   return includedTagsUnique;
 };
 
-// function which displays tags
+// function which creates tag's list HTML
 const createLiTags = (tagList, parentElem) => {
   parentElem.innerHTML = "";
 
@@ -131,6 +134,15 @@ const createLiTags = (tagList, parentElem) => {
   });
 
   parentElem.innerHTML = `<ul>${liTags}</ul>`;
+};
+
+//function which creates filtered tag's HTML
+const createFilteredElem = (filteredTag, parentElem) => {
+  const liElem = document.createElement("li");
+  liElem.classList.add("filtered-tag");
+  liElem.innerHTML += `${filteredTag}`;
+
+  parentElem.appendChild(liElem);
 };
 
 // register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
@@ -164,6 +176,7 @@ inputAppliance.addEventListener("click", (e) => {
       console.log(idsDisplayedRecipe);
 
       createLiTags(extractIncludedTags(), divListAppliance);
+      createFilteredElem(clickedTag, divFilteredList);
     });
   });
 });

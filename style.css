@@ -50,7 +50,26 @@ input {
   font-size: 1.4em;
 }
 
-/* Search by tag styling */
+/* Applied filter tag styling */
+.searched-filter {
+  height: 90px;
+}
+.filtered-wrapper ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+.filtered-tag {
+  padding: 0.5em;
+  background-color: rgb(114, 192, 147);
+  color: white;
+  width: 100px;
+  list-style-type: none;
+  border-radius: 5px;
+  margin-right: 0.5em;
+}
+
+/* Specific search styling */
 .search-tag {
   display: flex;
   margin-bottom: 1.5em;
