@@ -12,6 +12,8 @@ let divListApplianceLi = null;
 const divFilteredList = document.querySelector(
   ".searched-filter .filtered-wrapper ul"
 );
+let liElem = null;
+let closeFiltred = null;
 
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
@@ -42,6 +44,7 @@ const createRecipeElem = (recipe) => {
                           </div>`;
 
   result.appendChild(recipeHtml);
+  return recipeHtml;
 };
 
 let idsDisplayedRecipe = [];
@@ -138,9 +141,9 @@ const createLiTags = (tagList, parentElem) => {
 
 //function which creates filtered tag's HTML
 const createFilteredElem = (filteredTag, parentElem) => {
-  const liElem = document.createElement("li");
+  liElem = document.createElement("li");
   liElem.classList.add("filtered-tag");
-  liElem.innerHTML += `${filteredTag}`;
+  liElem.innerHTML += `${filteredTag} &emsp;<i class="far fa-times-circle"></i>`;
 
   parentElem.appendChild(liElem);
 };
@@ -153,9 +156,9 @@ inputAppliance.addEventListener("click", (e) => {
   divListApplianceLi = document.querySelectorAll(
     "div.search-tag-list__appliance ul li"
   );
-
   let tempIds = [];
 
+  // register click event on each tag -> display corresponding recipes and tags, create a box with the filtered tag name
   divListApplianceLi.forEach((li) => {
     li.addEventListener("click", (e) => {
       console.log("idsDisplayedRecipe", idsDisplayedRecipe);
@@ -177,6 +180,24 @@ inputAppliance.addEventListener("click", (e) => {
 
       createLiTags(extractIncludedTags(), divListAppliance);
       createFilteredElem(clickedTag, divFilteredList);
+
+      closeFiltred = document.querySelector("i.fa-times-circle");
+
+      // register click event on closing icon -> trial to unfiter recipes
+      closeFiltred.addEventListener("click", (e) => {
+        console.log(clickedTag);
+        divFilteredList.removeChild(liElem);
+
+        recipes.forEach((recipe) => {
+          if (recipe.appliance === clickedTag) {
+            console.log(recipe.id);
+            console.log(createRecipeElem(recipe));
+            result.removeChild(createRecipeElem(recipe));
+          }
+        });
+        console.log(idsDisplayedRecipe);
+        console.log(tempIds);
+      });
     });
   });
 });
