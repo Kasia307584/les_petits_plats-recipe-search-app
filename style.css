@@ -51,15 +51,15 @@ input {
 }
 
 /* Applied filter tag styling */
-.searched-filter {
+.selected-tags {
   height: 90px;
 }
-.filtered-wrapper ul {
+.selected-wrapper ul {
   display: flex;
   margin: 0;
   padding: 0;
 }
-.filtered-tag {
+.selected-tag {
   padding: 0.5em;
   background-color: rgb(114, 192, 147);
   color: white;

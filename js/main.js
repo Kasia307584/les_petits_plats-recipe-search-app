@@ -10,10 +10,13 @@ const chevronAppliance = document.querySelector(
 );
 let divListApplianceLi = null;
 const divFilteredList = document.querySelector(
-  ".searched-filter .filtered-wrapper ul"
+  ".selected-tags .selected-wrapper ul"
 );
 let liElem = null;
 let closeFiltred = null;
+
+let idsDisplayedRecipe = [];
+const selectedApplianceTags = [];
 
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
@@ -46,8 +49,6 @@ const createRecipeElem = (recipe) => {
   result.appendChild(recipeHtml);
   return recipeHtml;
 };
-
-let idsDisplayedRecipe = [];
 
 // display recipes and stock ids of displayed recipes
 recipes.forEach((recipe) => {
@@ -127,7 +128,7 @@ const extractIncludedTags = () => {
   return includedTagsUnique;
 };
 
-// function which creates tag's list HTML
+// function which creates tag's list HTML and register event on each tag
 const createLiTags = (tagList, parentElem) => {
   parentElem.innerHTML = "";
 
@@ -137,69 +138,63 @@ const createLiTags = (tagList, parentElem) => {
   });
 
   parentElem.innerHTML = `<ul>${liTags}</ul>`;
-};
-
-//function which creates filtered tag's HTML
-const createFilteredElem = (filteredTag, parentElem) => {
-  liElem = document.createElement("li");
-  liElem.classList.add("filtered-tag");
-  liElem.innerHTML += `${filteredTag} &emsp;<i class="far fa-times-circle"></i>`;
-
-  parentElem.appendChild(liElem);
-};
-
-// register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
-// and register event click on each tag -> (which will display the corresponding recipes and appliance tags (included in those recipes))
-inputAppliance.addEventListener("click", (e) => {
-  createLiTags(extractIncludedTags(), divListAppliance);
 
   divListApplianceLi = document.querySelectorAll(
     "div.search-tag-list__appliance ul li"
   );
-  let tempIds = [];
 
-  // register click event on each tag -> display corresponding recipes and tags, create a box with the filtered tag name
+  // register click event on each tag -> display corresponding recipes and tag list, create selected tag's HTML
   divListApplianceLi.forEach((li) => {
     li.addEventListener("click", (e) => {
-      console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-      let clickedTag = e.target.textContent;
-      console.log(clickedTag);
-      result.innerHTML = "";
-
-      recipes.forEach((recipe) => {
-        if (
-          idsDisplayedRecipe.includes(recipe.id) &&
-          recipe.appliance === clickedTag
-        ) {
-          createRecipeElem(recipe);
-          tempIds.push(recipe.id);
-        }
-      });
-      idsDisplayedRecipe = tempIds;
-      console.log(idsDisplayedRecipe);
-
+      filterByTag(e);
       createLiTags(extractIncludedTags(), divListAppliance);
-      createFilteredElem(clickedTag, divFilteredList);
-
-      closeFiltred = document.querySelector("i.fa-times-circle");
-
-      // register click event on closing icon -> trial to unfiter recipes
-      closeFiltred.addEventListener("click", (e) => {
-        console.log(clickedTag);
-        divFilteredList.removeChild(liElem);
-
-        recipes.forEach((recipe) => {
-          if (recipe.appliance === clickedTag) {
-            console.log(recipe.id);
-            console.log(createRecipeElem(recipe));
-            result.removeChild(createRecipeElem(recipe));
-          }
-        });
-        console.log(idsDisplayedRecipe);
-        console.log(tempIds);
-      });
+      createSelectedElem(filterByTag(e), divFilteredList);
+      selectedApplianceTags.push(filterByTag(e));
     });
   });
+  console.log(selectedApplianceTags);
+};
+
+// function which filter recipes by appliance tag
+const filterByTag = (e) => {
+  let tempIds = [];
+  let clickedTag = e.target.textContent;
+  result.innerHTML = "";
+
+  recipes.forEach((recipe) => {
+    if (
+      idsDisplayedRecipe.includes(recipe.id) &&
+      recipe.appliance === clickedTag
+    ) {
+      createRecipeElem(recipe);
+      tempIds.push(recipe.id);
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+  return clickedTag;
+};
+
+// function which creates selected tag's HTML
+const createSelectedElem = (selectedTag, parentElem) => {
+  liElem = document.createElement("li");
+  liElem.classList.add("selected-tag");
+  // liElem.setAttribute("id", `${selectedTag}`);
+  liElem.innerHTML += `${selectedTag} &emsp;<i class="far fa-times-circle"></i>`;
+
+  parentElem.appendChild(liElem);
+
+  closeFiltred = document.querySelector("i.fa-times-circle");
+
+  // register click event on closing icon -> trial to re-fiter recipes
+  closeFiltred.addEventListener("click", (e) => {
+    console.log(selectedTag);
+    divFilteredList.removeChild(liElem); // comment preciser l'enfant a retirer ? avec id de liElem ?
+  });
+};
+
+// register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
+inputAppliance.addEventListener("click", (e) => {
+  createLiTags(extractIncludedTags(), divListAppliance);
 });
 
 // register click event on the appliance chevron icon -> display appliance tags (included in currently displayed recipes)
@@ -229,7 +224,7 @@ inputAppliance.addEventListener("keyup", (e) => {
 
     // loop through recipes
     recipes.forEach((recipe) => {
-      isApplianceIncluded = recipe.appliance
+      isApplianceIncluded = recipe.appliance // PAS POSSIBLE <- comment faire pour generaliser ca en fonction qui marche aussi pour ustensiles et ingredients ?
         .toLowerCase()
         .includes(inputApplianceValue);
 
