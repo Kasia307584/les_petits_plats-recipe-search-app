@@ -57,58 +57,61 @@ recipes.forEach((recipe) => {
 });
 console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
-// register keyup event on the global search input -> display corresponding recipes
-searchInputGlobal.addEventListener("keyup", (e) => {
-  // check that at least 3 characters have been entred in the input field
-  if (searchInputGlobal.validity.valid) {
-    console.log("input is valid");
+// function which retrieves value from global input and displays corresponding recipes
+const globalInputSearch = () => {
+  // get the user's input value
+  const inputGlobalValue = searchInputGlobal.value.toLowerCase();
+  console.log(inputGlobalValue);
 
-    // get the user's input value
-    const inputGlobalValue = searchInputGlobal.value.toLowerCase();
-    console.log(inputGlobalValue);
+  // empty the gallery and the global variable
+  result.innerHTML = "";
+  idsDisplayedRecipe = [];
+  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
-    // empty the gallery and the global variable
-    result.innerHTML = "";
-    idsDisplayedRecipe = [];
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+  // initialise booleans
+  let isIncluded = false;
+  let isAnyIncluded = []; // list of booleans true if value included in the recipe
+  console.log("isAnyIncluded", isAnyIncluded);
 
-    // initialise booleans
-    let isIncluded = false;
-    let isAnyIncluded = []; // list of booleans true if value included in the recipe
-    console.log("isAnyIncluded", isAnyIncluded);
+  // loop through recipes
+  recipes.forEach((recipe) => {
+    let arrayOfBooleans = []; // booleans true/false depending if value included in ingredients
 
-    // loop through recipes
-    recipes.forEach((recipe) => {
-      let arrayOfBooleans = []; // booleans true/false depending if value included in ingredients
-
-      // loop through ingredients
-      recipe.ingredients.forEach((ingredient) => {
-        arrayOfBooleans.push(
-          ingredient.ingredient.toLowerCase().includes(inputGlobalValue)
-        );
-      });
-
-      // check that the input text is included in recipes
-      isIncluded =
-        recipe.name.toLowerCase().includes(inputGlobalValue) ||
-        recipe.description.toLowerCase().includes(inputGlobalValue) ||
-        arrayOfBooleans.some((item) => item === true);
-
-      console.log("isIncluded:", isIncluded);
-
-      // display the targeted recipes and stock ids of displayed recipes
-      if (isIncluded) {
-        console.log("ID recipe to show", recipe.id);
-        createRecipeElem(recipe);
-        isAnyIncluded.push(isIncluded);
-        idsDisplayedRecipe.push(recipe.id);
-      }
+    // loop through ingredients
+    recipe.ingredients.forEach((ingredient) => {
+      arrayOfBooleans.push(
+        ingredient.ingredient.toLowerCase().includes(inputGlobalValue)
+      );
     });
+
+    // check that the input text is included in recipes
+    isIncluded =
+      recipe.name.toLowerCase().includes(inputGlobalValue) ||
+      recipe.description.toLowerCase().includes(inputGlobalValue) ||
+      arrayOfBooleans.some((item) => item === true);
+
+    console.log("isIncluded:", isIncluded);
+
+    // display the targeted recipes and stock ids of displayed recipes
+    if (isIncluded) {
+      console.log("ID recipe to show", recipe.id);
+      createRecipeElem(recipe);
+      isAnyIncluded.push(isIncluded);
+      idsDisplayedRecipe.push(recipe.id);
+    }
     // display a message when there isn't any recipe which includes the input value
     if (!isAnyIncluded.some((item) => item === true)) {
       result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
         chercher « tarte aux pommes », « poisson », etc.</p>`;
     }
+  });
+};
+// register keyup event on the global search input
+searchInputGlobal.addEventListener("keyup", (e) => {
+  // check that at least 3 characters have been entred in the input field
+  if (searchInputGlobal.validity.valid) {
+    console.log("input is valid");
+    globalInputSearch();
   }
 });
 
@@ -178,7 +181,7 @@ const filterByTag = (e) => {
 const createSelectedElem = (selectedTag, parentElem) => {
   liElem = document.createElement("li");
   liElem.classList.add("selected-tag");
-  // liElem.setAttribute("id", `${selectedTag}`);
+  // liElem.setAttribute("id", `${selectedTag.toLowerCase()}`);
   liElem.innerHTML += `${selectedTag} &emsp;<i class="far fa-times-circle"></i>`;
 
   parentElem.appendChild(liElem);
@@ -187,8 +190,17 @@ const createSelectedElem = (selectedTag, parentElem) => {
 
   // register click event on closing icon -> trial to re-fiter recipes
   closeFiltred.addEventListener("click", (e) => {
-    console.log(selectedTag);
-    divFilteredList.removeChild(liElem); // comment preciser l'enfant a retirer ? avec id de liElem ?
+    // console.log(selectedApplianceTags);
+    // console.log(selectedTag);
+    // console.log(liElem);
+    const index = selectedApplianceTags.indexOf(selectedTag);
+    selectedApplianceTags.splice(index, 1);
+    // console.log(selectedApplianceTags);
+    if (liElem.textContent.includes(selectedTag)) {
+      divFilteredList.removeChild(liElem); // comment preciser l'enfant a retirer ? avec id de liElem ?
+    }
+    globalInputSearch();
+    createLiTags(extractIncludedTags(), divListAppliance);
   });
 };
 
