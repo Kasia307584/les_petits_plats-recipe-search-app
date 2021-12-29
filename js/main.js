@@ -106,7 +106,7 @@ const globalInputSearch = () => {
     }
   });
 };
-// register keyup event on the global search input
+// register keyup event on the global search input -> display corresponding recipes
 searchInputGlobal.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
   if (searchInputGlobal.validity.valid) {
@@ -177,29 +177,30 @@ const filterByTag = (e) => {
   return clickedTag;
 };
 
-// function which creates selected tag's HTML
+// function which creates selected tag's HTML and register event on each closing icon
 const createSelectedElem = (selectedTag, parentElem) => {
   liElem = document.createElement("li");
   liElem.classList.add("selected-tag");
-  // liElem.setAttribute("id", `${selectedTag.toLowerCase()}`);
+  liElem.setAttribute("id", `${selectedTag}`);
   liElem.innerHTML += `${selectedTag} &emsp;<i class="far fa-times-circle"></i>`;
 
   parentElem.appendChild(liElem);
 
   closeFiltred = document.querySelector("i.fa-times-circle");
 
-  // register click event on closing icon -> trial to re-fiter recipes
+  // register click event on closing icon -> re-fiter recipes and tag list, remove closed tag's HTML
   closeFiltred.addEventListener("click", (e) => {
-    // console.log(selectedApplianceTags);
-    // console.log(selectedTag);
-    // console.log(liElem);
-    const index = selectedApplianceTags.indexOf(selectedTag);
-    selectedApplianceTags.splice(index, 1);
-    // console.log(selectedApplianceTags);
-    if (liElem.textContent.includes(selectedTag)) {
-      divFilteredList.removeChild(liElem); // comment preciser l'enfant a retirer ? avec id de liElem ?
-    }
+    // find the parent of the clicked icon
+    const liTarget = e.target.closest("li");
+    // find the index of the closing tag in the array of tags
+    const applianceIndex = selectedApplianceTags.indexOf(liTarget.id);
+    // remove the targeted tag form the array
+    selectedApplianceTags.splice(applianceIndex, 1);
+    // remove the tag's HTML from the DOM tree
+    liTarget.remove();
+    // update recipes
     globalInputSearch();
+    // update tag list
     createLiTags(extractIncludedTags(), divListAppliance);
   });
 };
