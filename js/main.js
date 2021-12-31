@@ -4,11 +4,14 @@ import { recipes } from "./recipes.js";
 const result = document.querySelector(".cards");
 const searchInputGlobal = document.getElementById("search-global-input");
 const divListAppliance = document.querySelector(".search-tag-list__appliance");
+const divListUstensils = document.querySelector(".search-tag-list__ustensils");
 const inputAppliance = document.getElementById("search-tag-input__appliance");
+const inputUstensil = document.getElementById("search-tag-input__ustensil");
 const chevronAppliance = document.querySelector(
   ".search-tag-button__appliance i.fa-chevron-down"
 );
 let divListApplianceLi = null;
+let divListUstensilsLi = null;
 const divFilteredList = document.querySelector(
   ".selected-tags .selected-wrapper ul"
 );
@@ -17,6 +20,7 @@ let closeFiltred = null;
 
 let idsDisplayedRecipe = [];
 const selectedApplianceTags = [];
+const selectedUstensilsTags = [];
 
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
@@ -115,18 +119,25 @@ searchInputGlobal.addEventListener("keyup", (e) => {
   }
 });
 
-// function which extracts appliance tags (included in currently displayed recipes) into an array
-const extractIncludedTags = () => {
+// function which extracts tags (included in currently displayed recipes) into an array; return the array
+const extractIncludedTags = (recipeElemType) => {
   let includedTags = [];
 
   recipes.forEach((recipe) => {
     if (idsDisplayedRecipe.includes(recipe.id)) {
-      includedTags.push(recipe.appliance);
+      // if(typeof recipe[recipeElemType] === 'object')
+      if (Array.isArray(recipe[recipeElemType])) {
+        let normalised = "";
+        recipe[recipeElemType].forEach((elem) => {
+          normalised = elem[0].toUpperCase() + elem.slice(1);
+        });
+        includedTags = includedTags.concat(normalised);
+      } else {
+        includedTags.push(recipe[recipeElemType]);
+      }
     }
   });
-
   let includedTagsUnique = [...new Set(includedTags)];
-  console.log(includedTagsUnique);
 
   return includedTagsUnique;
 };
@@ -145,21 +156,34 @@ const createLiTags = (tagList, parentElem) => {
   divListApplianceLi = document.querySelectorAll(
     "div.search-tag-list__appliance ul li"
   );
+  divListUstensilsLi = document.querySelectorAll(
+    "div.search-tag-list__ustensils ul li"
+  );
 
   // register click event on each tag -> display corresponding recipes and tag list, create selected tag's HTML
   divListApplianceLi.forEach((li) => {
     li.addEventListener("click", (e) => {
-      filterByTag(e);
-      createLiTags(extractIncludedTags(), divListAppliance);
-      createSelectedElem(filterByTag(e), divFilteredList);
-      selectedApplianceTags.push(filterByTag(e));
+      filterByTag(e, "appliance");
+      createLiTags(extractIncludedTags("appliance"), divListAppliance);
+      createSelectedElem(filterByTag(e, "appliance"), divFilteredList);
+      selectedApplianceTags.push(filterByTag(e, "appliance"));
     });
   });
   console.log(selectedApplianceTags);
+
+  divListUstensilsLi.forEach((li) => {
+    li.addEventListener("click", (e) => {
+      filterByTag(e, "ustensils");
+      createLiTags(extractIncludedTags("ustensils"), divListUstensils);
+      createSelectedElem(filterByTag(e, "ustensils"), divFilteredList);
+      selectedUstensilsTags.push(filterByTag(e, "ustensils"));
+    });
+  });
+  console.log(selectedUstensilsTags);
 };
 
 // function which filter recipes by appliance tag
-const filterByTag = (e) => {
+const filterByTag = (e, recipeElemType) => {
   let tempIds = [];
   let clickedTag = e.target.textContent;
   result.innerHTML = "";
@@ -167,7 +191,8 @@ const filterByTag = (e) => {
   recipes.forEach((recipe) => {
     if (
       idsDisplayedRecipe.includes(recipe.id) &&
-      recipe.appliance === clickedTag
+      recipe[recipeElemType] === clickedTag
+      // || recipe[recipeElemType].includes(clickedTag)
     ) {
       createRecipeElem(recipe);
       tempIds.push(recipe.id);
@@ -197,17 +222,22 @@ const createSelectedElem = (selectedTag, parentElem) => {
     // remove the targeted tag form the array
     selectedApplianceTags.splice(applianceIndex, 1);
     // remove the tag's HTML from the DOM tree
-    liTarget.remove();
+    liTarget.remove(); // it's the same as parentElem.removeChild(liTarget)
     // update recipes
     globalInputSearch();
     // update tag list
-    createLiTags(extractIncludedTags(), divListAppliance);
+    createLiTags(extractIncludedTags("appliance"), divListAppliance);
   });
 };
 
 // register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
 inputAppliance.addEventListener("click", (e) => {
-  createLiTags(extractIncludedTags(), divListAppliance);
+  createLiTags(extractIncludedTags("appliance"), divListAppliance);
+});
+
+// register click event on the ustensils search input -> display ustensils tags (included in currently displayed recipes)
+inputUstensil.addEventListener("click", (e) => {
+  createLiTags(extractIncludedTags("ustensils"), divListUstensils);
 });
 
 // register click event on the appliance chevron icon -> display appliance tags (included in currently displayed recipes)
