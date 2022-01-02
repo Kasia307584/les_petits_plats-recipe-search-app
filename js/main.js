@@ -22,6 +22,9 @@ let idsDisplayedRecipe = [];
 const selectedApplianceTags = [];
 const selectedUstensilsTags = [];
 
+// function which normalise the format of a tag
+const normalise = (elem) => elem[0].toUpperCase() + elem.slice(1).toLowerCase();
+
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
   let recipeHtml = document.createElement("div");
@@ -51,7 +54,6 @@ const createRecipeElem = (recipe) => {
                           </div>`;
 
   result.appendChild(recipeHtml);
-  return recipeHtml;
 };
 
 // display recipes and stock ids of displayed recipes
@@ -125,11 +127,10 @@ const extractIncludedTags = (recipeElemType) => {
 
   recipes.forEach((recipe) => {
     if (idsDisplayedRecipe.includes(recipe.id)) {
-      // if(typeof recipe[recipeElemType] === 'object')
       if (Array.isArray(recipe[recipeElemType])) {
-        let normalised = "";
+        let normalised = [];
         recipe[recipeElemType].forEach((elem) => {
-          normalised = elem[0].toUpperCase() + elem.slice(1);
+          normalised.push(normalise(elem));
         });
         includedTags = includedTags.concat(normalised);
       } else {
@@ -165,41 +166,48 @@ const createLiTags = (tagList, parentElem) => {
     li.addEventListener("click", (e) => {
       filterByTag(e, "appliance");
       createLiTags(extractIncludedTags("appliance"), divListAppliance);
-      createSelectedElem(filterByTag(e, "appliance"), divFilteredList);
-      selectedApplianceTags.push(filterByTag(e, "appliance"));
+      createSelectedElem(e.target.textContent, divFilteredList);
+      selectedApplianceTags.push(e.target.textContent);
+      console.log("selectedApplianceTags", selectedApplianceTags);
     });
   });
-  console.log(selectedApplianceTags);
 
   divListUstensilsLi.forEach((li) => {
     li.addEventListener("click", (e) => {
       filterByTag(e, "ustensils");
       createLiTags(extractIncludedTags("ustensils"), divListUstensils);
-      createSelectedElem(filterByTag(e, "ustensils"), divFilteredList);
-      selectedUstensilsTags.push(filterByTag(e, "ustensils"));
+      createSelectedElem(e.target.textContent, divFilteredList);
+      selectedUstensilsTags.push(e.target.textContent);
+      console.log("selectedUstensilsTags", selectedUstensilsTags);
     });
   });
-  console.log(selectedUstensilsTags);
 };
 
-// function which filter recipes by appliance tag
-const filterByTag = (e, recipeElemType) => {
+// function which filter recipes by tag
+const filterByTag = (event, recipeElemType) => {
   let tempIds = [];
-  let clickedTag = e.target.textContent;
+  let clickedTag = event.target.textContent;
   result.innerHTML = "";
+  console.log(idsDisplayedRecipe);
 
   recipes.forEach((recipe) => {
+    let normalised = [];
+    if (Array.isArray(recipe[recipeElemType])) {
+      recipe[recipeElemType].forEach((elem) => {
+        normalised.push(normalise(elem));
+      });
+    }
     if (
-      idsDisplayedRecipe.includes(recipe.id) &&
-      recipe[recipeElemType] === clickedTag
-      // || recipe[recipeElemType].includes(clickedTag)
+      (idsDisplayedRecipe.includes(recipe.id) &&
+        recipe[recipeElemType] === clickedTag) ||
+      normalised.includes(clickedTag)
     ) {
       createRecipeElem(recipe);
       tempIds.push(recipe.id);
     }
   });
   idsDisplayedRecipe = tempIds;
-  return clickedTag;
+  console.log(idsDisplayedRecipe);
 };
 
 // function which creates selected tag's HTML and register event on each closing icon
@@ -217,16 +225,19 @@ const createSelectedElem = (selectedTag, parentElem) => {
   closeFiltred.addEventListener("click", (e) => {
     // find the parent of the clicked icon
     const liTarget = e.target.closest("li");
+    // remove the tag's HTML from the DOM tree
+    liTarget.remove();
     // find the index of the closing tag in the array of tags
     const applianceIndex = selectedApplianceTags.indexOf(liTarget.id);
+    const ustensilsIndex = selectedUstensilsTags.indexOf(liTarget.id);
     // remove the targeted tag form the array
     selectedApplianceTags.splice(applianceIndex, 1);
-    // remove the tag's HTML from the DOM tree
-    liTarget.remove(); // it's the same as parentElem.removeChild(liTarget)
+    selectedUstensilsTags.splice(ustensilsIndex, 1);
     // update recipes
     globalInputSearch();
     // update tag list
     createLiTags(extractIncludedTags("appliance"), divListAppliance);
+    createLiTags(extractIncludedTags("ustensils"), divListUstensils);
   });
 };
 
