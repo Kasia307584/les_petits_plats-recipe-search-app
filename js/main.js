@@ -15,8 +15,6 @@ let divListUstensilsLi = null;
 const divFilteredList = document.querySelector(
   ".selected-tags .selected-wrapper ul"
 );
-let liElem = null;
-let closeFiltred = null;
 
 let idsDisplayedRecipe = [];
 const selectedApplianceTags = [];
@@ -212,14 +210,18 @@ const filterByTag = (event, recipeElemType) => {
 
 // function which creates selected tag's HTML and register event on each closing icon
 const createSelectedElem = (selectedTag, parentElem) => {
-  liElem = document.createElement("li");
+  const liElem = document.createElement("li");
   liElem.classList.add("selected-tag");
+  liElem.innerHTML += `${selectedTag}<i class="far fa-times-circle"></i>`;
+  // remove empty spaces from the tag name so it becomes a valuable ID name
+  selectedTag = selectedTag.replaceAll(" ", "-");
   liElem.setAttribute("id", `${selectedTag}`);
-  liElem.innerHTML += `${selectedTag} &emsp;<i class="far fa-times-circle"></i>`;
 
   parentElem.appendChild(liElem);
 
-  closeFiltred = document.querySelector("i.fa-times-circle");
+  const closeFiltred = document.querySelector(
+    `li#${selectedTag} i.fa-times-circle`
+  );
 
   // register click event on closing icon -> re-fiter recipes and tag list, remove closed tag's HTML
   closeFiltred.addEventListener("click", (e) => {
@@ -227,12 +229,30 @@ const createSelectedElem = (selectedTag, parentElem) => {
     const liTarget = e.target.closest("li");
     // remove the tag's HTML from the DOM tree
     liTarget.remove();
-    // find the index of the closing tag in the array of tags
-    const applianceIndex = selectedApplianceTags.indexOf(liTarget.id);
-    const ustensilsIndex = selectedUstensilsTags.indexOf(liTarget.id);
-    // remove the targeted tag form the array
-    selectedApplianceTags.splice(applianceIndex, 1);
-    selectedUstensilsTags.splice(ustensilsIndex, 1);
+
+    // retrieve the text content from the tag
+    let liTargetContent = e.target.closest("li").textContent;
+    // check if the tag is ustensils/appliance tag
+
+    if (selectedUstensilsTags.includes(liTargetContent)) {
+      console.log("The closed tag is an ustensil tag");
+      // find the index of the closed tag in the array of tags
+      const ustensilsIndex = selectedUstensilsTags.indexOf(liTarget.id);
+      // remove the targeted tag form the array
+      selectedUstensilsTags.splice(ustensilsIndex, 1);
+    } else {
+      console.log("The closed tag is an appliance tag");
+      const applianceIndex = selectedApplianceTags.indexOf(liTarget.id);
+      selectedApplianceTags.splice(applianceIndex, 1);
+    }
+
+    console.log(selectedUstensilsTags);
+    console.log(selectedApplianceTags);
+
+    // function filterByTag needs to be re-written in order to be used here
+    // filterByTag(liTargetContent, "appliance");
+    // filterByTag(liTargetContent, "ustensils");
+
     // update recipes
     globalInputSearch();
     // update tag list
