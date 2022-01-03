@@ -198,10 +198,10 @@ const filterByTag = (event, recipeElemType) => {
       });
     }
     if (
-      (idsDisplayedRecipe.includes(recipe.id) &&
-        recipe[recipeElemType] === clickedTag) ||
-      normalised.includes(clickedTag)
+      idsDisplayedRecipe.includes(recipe.id) &&
+      (recipe[recipeElemType] === clickedTag || normalised.includes(clickedTag))
     ) {
+      console.log("ID:", recipe.id, normalised);
       createRecipeElem(recipe);
       tempIds.push(recipe.id);
     }
