@@ -94,8 +94,6 @@ const globalInputSearch = () => {
       recipe.description.toLowerCase().includes(inputGlobalValue) ||
       arrayOfBooleans.some((item) => item === true);
 
-    console.log("isIncluded:", isIncluded);
-
     // display the targeted recipes and stock ids of displayed recipes
     if (isIncluded) {
       console.log("ID recipe to show", recipe.id);
@@ -103,12 +101,14 @@ const globalInputSearch = () => {
       isAnyIncluded.push(isIncluded);
       idsDisplayedRecipe.push(recipe.id);
     }
+
     // display a message when there isn't any recipe which includes the input value
     if (!isAnyIncluded.some((item) => item === true)) {
       result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
         chercher « tarte aux pommes », « poisson », etc.</p>`;
     }
   });
+  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 };
 // register keyup event on the global search input -> display corresponding recipes
 searchInputGlobal.addEventListener("keyup", (e) => {
@@ -125,6 +125,9 @@ const extractIncludedTags = (recipeElemType) => {
 
   recipes.forEach((recipe) => {
     if (idsDisplayedRecipe.includes(recipe.id)) {
+      // if (recipe[recipeElemType] === recipe.ingredients) {
+
+      // }
       if (Array.isArray(recipe[recipeElemType])) {
         let normalised = [];
         recipe[recipeElemType].forEach((elem) => {
@@ -181,7 +184,7 @@ const createLiTags = (tagList, parentElem) => {
   });
 };
 
-// function which filter recipes by tag
+// function which filter recipes by clicked tag
 const filterByTag = (event, recipeElemType) => {
   let tempIds = [];
   let clickedTag = event.target.textContent;
@@ -199,9 +202,38 @@ const filterByTag = (event, recipeElemType) => {
       idsDisplayedRecipe.includes(recipe.id) &&
       (recipe[recipeElemType] === clickedTag || normalised.includes(clickedTag))
     ) {
-      console.log("ID:", recipe.id, normalised);
       createRecipeElem(recipe);
       tempIds.push(recipe.id);
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+  console.log(idsDisplayedRecipe);
+};
+
+// function which filter recipes by selected tags
+const filterBySelectedTags = () => {
+  let tempIds = [];
+  result.innerHTML = "";
+  console.log("selectedApplianceTags", selectedApplianceTags);
+  console.log("selectedUstensilsTags", selectedUstensilsTags);
+  recipes.forEach((recipe) => {
+    let normalised = [];
+    recipe.ustensils.forEach((elem) => {
+      normalised.push(normalise(elem));
+    });
+    for (let tag of selectedUstensilsTags) {
+      if (normalised.includes(tag) && idsDisplayedRecipe.includes(recipe.id)) {
+        console.log(`tag ${tag} is present in selectedUstensilsTags`);
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
+    }
+    for (let tag of selectedApplianceTags) {
+      if (tag === recipe.appliance && idsDisplayedRecipe.includes(recipe.id)) {
+        console.log(`tag ${tag} is present in selectedApplianceTags`);
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
     }
   });
   idsDisplayedRecipe = tempIds;
@@ -249,12 +281,9 @@ const createSelectedElem = (selectedTag, parentElem) => {
     console.log(selectedUstensilsTags);
     console.log(selectedApplianceTags);
 
-    // function filterByTag needs to be re-written in order to be used here
-    // filterByTag(liTargetContent, "appliance");
-    // filterByTag(liTargetContent, "ustensils");
-
     // update recipes
     globalInputSearch();
+    filterBySelectedTags();
     // update tag list
     createLiTags(extractIncludedTags("appliance"), divListAppliance);
     createLiTags(extractIncludedTags("ustensils"), divListUstensils);
