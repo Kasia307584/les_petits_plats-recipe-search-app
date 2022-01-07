@@ -103,13 +103,12 @@ const globalInputSearch = () => {
       isAnyIncluded.push(isIncluded);
       idsDisplayedRecipe.push(recipe.id);
     }
-
-    // display a message when there isn't any recipe which includes the input value
-    if (!isAnyIncluded.some((item) => item === true)) {
-      result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
-        chercher « tarte aux pommes », « poisson », etc.</p>`;
-    }
   });
+  // display a message when there isn't any recipe which includes the input value
+  if (!isAnyIncluded.some((item) => item === true)) {
+    result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
+      chercher « tarte aux pommes », « poisson », etc.</p>`;
+  }
   console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 };
 // register keyup event on the global search input -> display corresponding recipes
@@ -214,10 +213,39 @@ const filterByTag = (event, recipeElemType) => {
   console.log(idsDisplayedRecipe);
 };
 
-// function which filter recipes by selected tags
-const filterBySelectedTags = () => {
+// function which filter recipes by selected appliance tags
+const filterBySelectedApplianceTags = () => {
   let tempIds = [];
   result.innerHTML = "";
+  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+  console.log("selectedApplianceTags", selectedApplianceTags);
+  console.log("selectedUstensilsTags", selectedUstensilsTags);
+
+  recipes.forEach((recipe) => {
+    for (let tag of selectedApplianceTags) {
+      if (
+        tag === recipe.appliance &&
+        idsDisplayedRecipe.includes(recipe.id) &&
+        !tempIds.includes(recipe.id)
+      ) {
+        console.log("tag", tag);
+        console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+        console.log("id", recipe.id);
+        console.log("tempsIds", tempIds);
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+  console.log(idsDisplayedRecipe);
+};
+
+// function which filter recipes by selected ustensils tags
+const filterBySelectedUstensilsTags = () => {
+  let tempIds = [];
+  result.innerHTML = "";
+  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
   console.log("selectedApplianceTags", selectedApplianceTags);
   console.log("selectedUstensilsTags", selectedUstensilsTags);
 
@@ -227,34 +255,15 @@ const filterBySelectedTags = () => {
       normalised.push(normalise(elem));
     });
     for (let tag of selectedUstensilsTags) {
-      if (normalised.includes(tag) && idsDisplayedRecipe.includes(recipe.id)) {
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-      }
-    }
-    for (let tag of selectedApplianceTags) {
       if (
-        tag === recipe.appliance &&
+        normalised.includes(tag) &&
         idsDisplayedRecipe.includes(recipe.id) &&
         !tempIds.includes(recipe.id)
       ) {
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-      }
-    }
-    console.log(tempIds);
-    if (
-      selectedUstensilsTags.length === 0 &&
-      selectedApplianceTags.length === 0
-    ) {
-      if (searchInputGlobal.value !== null) {
-        console.log(searchInputGlobal.value);
-        console.log("ther's a value in input global");
-        globalInputSearch();
-        tempIds.push(recipe.id);
-      }
-      if (searchInputGlobal.value === null) {
-        console.log("ther's NO value in input global");
+        console.log("tag", tag);
+        console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+        console.log("id", recipe.id);
+        console.log("tempsIds", tempIds);
         createRecipeElem(recipe);
         tempIds.push(recipe.id);
       }
@@ -262,6 +271,23 @@ const filterBySelectedTags = () => {
   });
   idsDisplayedRecipe = tempIds;
   console.log(idsDisplayedRecipe);
+};
+
+// function which filter recipes when there is no selected tags left
+const noSelectedTags = () => {
+  if (searchInputGlobal.value === "") {
+    let idsDisplayedRecipe = [];
+    console.log("ther's NO value in input global");
+    recipes.forEach((recipe) => {
+      createRecipeElem(recipe);
+      idsDisplayedRecipe.push(recipe.id);
+    });
+  } else {
+    console.log(searchInputGlobal.value);
+    console.log("ther's a value in input global");
+    globalInputSearch();
+  }
+  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 };
 
 // function which creates selected tag's HTML and register event on each closing icon
@@ -306,8 +332,32 @@ const createSelectedElem = (selectedTag, parentElem) => {
     console.log(selectedApplianceTags);
 
     // update recipes
-    globalInputSearch();
-    filterBySelectedTags();
+    // if (searchInputGlobal.value !== "") {
+    //   globalInputSearch();
+    // }
+    if (selectedApplianceTags.length !== 0) {
+      if (searchInputGlobal.value !== "") {
+        globalInputSearch();
+      } else {
+        idsDisplayedRecipe = [];
+        recipes.forEach((recipe) => {
+          idsDisplayedRecipe.push(recipe.id);
+        });
+      }
+      console.log(idsDisplayedRecipe);
+
+      filterBySelectedApplianceTags();
+    }
+    if (selectedUstensilsTags.length !== 0) {
+      filterBySelectedUstensilsTags();
+    }
+    if (
+      selectedUstensilsTags.length === 0 &&
+      selectedApplianceTags.length === 0
+    ) {
+      noSelectedTags();
+    }
+
     // update tag list
     createLiTags(extractIncludedTags("appliance"), divListAppliance);
     createLiTags(extractIncludedTags("ustensils"), divListUstensils);
