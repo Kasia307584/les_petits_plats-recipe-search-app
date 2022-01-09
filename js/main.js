@@ -228,10 +228,6 @@ const filterBySelectedApplianceTags = () => {
         idsDisplayedRecipe.includes(recipe.id) &&
         !tempIds.includes(recipe.id)
       ) {
-        console.log("tag", tag);
-        console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-        console.log("id", recipe.id);
-        console.log("tempsIds", tempIds);
         createRecipeElem(recipe);
         tempIds.push(recipe.id);
       }
@@ -260,10 +256,6 @@ const filterBySelectedUstensilsTags = () => {
         idsDisplayedRecipe.includes(recipe.id) &&
         !tempIds.includes(recipe.id)
       ) {
-        console.log("tag", tag);
-        console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-        console.log("id", recipe.id);
-        console.log("tempsIds", tempIds);
         createRecipeElem(recipe);
         tempIds.push(recipe.id);
       }
@@ -273,17 +265,16 @@ const filterBySelectedUstensilsTags = () => {
   console.log(idsDisplayedRecipe);
 };
 
-// function which filter recipes when there is no selected tags left
-const noSelectedTags = () => {
+// function which conditions the update of recipes depending on the global input
+const filterByGlobalInput = () => {
   if (searchInputGlobal.value === "") {
-    let idsDisplayedRecipe = [];
+    idsDisplayedRecipe = [];
     console.log("ther's NO value in input global");
     recipes.forEach((recipe) => {
       createRecipeElem(recipe);
       idsDisplayedRecipe.push(recipe.id);
     });
   } else {
-    console.log(searchInputGlobal.value);
     console.log("ther's a value in input global");
     globalInputSearch();
   }
@@ -305,17 +296,15 @@ const createSelectedElem = (selectedTag, parentElem) => {
     `li#${selectedTag} i.fa-times-circle`
   );
 
-  // register click event on closing icon -> re-fiter recipes and tag list, remove closed tag's HTML
+  // register click event on closing icon -> remove closed tag's HTML, re-fiter recipes and tag list
   closeFiltred.addEventListener("click", (e) => {
     // find the parent of the clicked icon
     const liTarget = e.target.closest("li");
     // remove the tag's HTML from the DOM tree
     liTarget.remove();
-
     // retrieve the text content from the tag
     let liTargetContent = e.target.closest("li").textContent;
     // check if the tag is ustensils/appliance tag
-
     if (selectedUstensilsTags.includes(liTargetContent)) {
       console.log("The closed tag is an ustensil tag");
       // find the index of the closed tag in the array of tags
@@ -327,25 +316,12 @@ const createSelectedElem = (selectedTag, parentElem) => {
       const applianceIndex = selectedApplianceTags.indexOf(liTarget.id);
       selectedApplianceTags.splice(applianceIndex, 1);
     }
-
     console.log(selectedUstensilsTags);
     console.log(selectedApplianceTags);
 
     // update recipes
-    // if (searchInputGlobal.value !== "") {
-    //   globalInputSearch();
-    // }
     if (selectedApplianceTags.length !== 0) {
-      if (searchInputGlobal.value !== "") {
-        globalInputSearch();
-      } else {
-        idsDisplayedRecipe = [];
-        recipes.forEach((recipe) => {
-          idsDisplayedRecipe.push(recipe.id);
-        });
-      }
-      console.log(idsDisplayedRecipe);
-
+      filterByGlobalInput();
       filterBySelectedApplianceTags();
     }
     if (selectedUstensilsTags.length !== 0) {
@@ -355,7 +331,7 @@ const createSelectedElem = (selectedTag, parentElem) => {
       selectedUstensilsTags.length === 0 &&
       selectedApplianceTags.length === 0
     ) {
-      noSelectedTags();
+      filterByGlobalInput();
     }
 
     // update tag list
