@@ -24,6 +24,7 @@ const divFilteredList = document.querySelector(
 let idsDisplayedRecipe = [];
 const selectedApplianceTags = [];
 const selectedUstensilsTags = [];
+const selectedIngredientsTags = [];
 
 // function which normalise the format of a tag
 const normalise = (elem) => elem[0].toUpperCase() + elem.slice(1).toLowerCase();
@@ -185,6 +186,16 @@ const createLiTags = (tagList, parentElem) => {
       console.log("selectedUstensilsTags", selectedUstensilsTags);
     });
   });
+
+  divListIngredientsLi.forEach((li) => {
+    li.addEventListener("click", (e) => {
+      filterByTag(e, "ingredients");
+      createLiTags(extractIncludedTags("ingredients"), divListIngredients);
+      createSelectedElem(e.target.textContent, divFilteredList);
+      selectedIngredientsTags.push(e.target.textContent);
+      console.log("selectedIngredientsTags", selectedIngredientsTags);
+    });
+  });
 };
 
 // function which filter recipes by clicked tag
@@ -195,15 +206,24 @@ const filterByTag = (event, recipeElemType) => {
   console.log(idsDisplayedRecipe);
 
   recipes.forEach((recipe) => {
+    let ingredients = [];
     let normalised = [];
-    if (Array.isArray(recipe[recipeElemType])) {
+
+    if (recipe[recipeElemType] === recipe.ingredients) {
+      recipe[recipeElemType].forEach((elem) => {
+        ingredients.push(elem.ingredient);
+      });
+    }
+    if (recipe[recipeElemType] === recipe.ustensils) {
       recipe[recipeElemType].forEach((elem) => {
         normalised.push(normalise(elem));
       });
     }
     if (
       idsDisplayedRecipe.includes(recipe.id) &&
-      (recipe[recipeElemType] === clickedTag || normalised.includes(clickedTag))
+      (recipe[recipeElemType] === clickedTag ||
+        normalised.includes(clickedTag) ||
+        ingredients.includes(clickedTag))
     ) {
       createRecipeElem(recipe);
       tempIds.push(recipe.id);
@@ -265,6 +285,33 @@ const filterBySelectedUstensilsTags = () => {
   console.log(idsDisplayedRecipe);
 };
 
+const filterBySelectedIngredientsTags = () => {
+  let tempIds = [];
+  result.innerHTML = ""; // peut etre il faut changer ca
+  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+  console.log("selectedApplianceTags", selectedApplianceTags);
+  console.log("selectedUstensilsTags", selectedUstensilsTags);
+
+  recipes.forEach((recipe) => {
+    let ingredients = [];
+    recipe.ingredients.forEach((elem) => {
+      ingredients.push(elem.ingredient);
+    });
+    for (let tag of selectedIngredientsTags) {
+      if (
+        ingredients.includes(tag) &&
+        idsDisplayedRecipe.includes(recipe.id) &&
+        !tempIds.includes(recipe.id)
+      ) {
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+  console.log(idsDisplayedRecipe);
+};
+
 // function which conditions the update of recipes depending on the global input
 const filterByGlobalInput = () => {
   if (searchInputGlobal.value === "") {
@@ -304,12 +351,17 @@ const createSelectedElem = (selectedTag, parentElem) => {
     liTarget.remove();
     // retrieve the text content from the tag
     let liTargetContent = e.target.closest("li").textContent;
-    // check if the tag is ustensils/appliance tag
-    if (selectedUstensilsTags.includes(liTargetContent)) {
-      console.log("The closed tag is an ustensil tag");
+
+    // check if the tag is ingredients/ustensils/appliance tag
+    if (selectedIngredientsTags.includes(liTargetContent)) {
+      console.log("The closed tag is an ingredient tag");
       // find the index of the closed tag in the array of tags
-      const ustensilsIndex = selectedUstensilsTags.indexOf(liTarget.id);
+      const ingredientsIndex = selectedIngredientsTags.indexOf(liTarget.id);
       // remove the targeted tag form the array
+      selectedIngredientsTags.splice(ingredientsIndex, 1);
+    } else if (selectedUstensilsTags.includes(liTargetContent)) {
+      console.log("The closed tag is an ustensil tag");
+      const ustensilsIndex = selectedUstensilsTags.indexOf(liTarget.id);
       selectedUstensilsTags.splice(ustensilsIndex, 1);
     } else {
       console.log("The closed tag is an appliance tag");
@@ -318,6 +370,7 @@ const createSelectedElem = (selectedTag, parentElem) => {
     }
     console.log(selectedUstensilsTags);
     console.log(selectedApplianceTags);
+    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
     // update recipes
     if (selectedApplianceTags.length !== 0) {
@@ -325,11 +378,17 @@ const createSelectedElem = (selectedTag, parentElem) => {
       filterBySelectedApplianceTags();
     }
     if (selectedUstensilsTags.length !== 0) {
+      filterByGlobalInput();
       filterBySelectedUstensilsTags();
+    }
+    if (selectedIngredientsTags.length !== 0) {
+      filterByGlobalInput();
+      filterBySelectedIngredientsTags();
     }
     if (
       selectedUstensilsTags.length === 0 &&
-      selectedApplianceTags.length === 0
+      selectedApplianceTags.length === 0 &&
+      selectedIngredientsTags.length === 0
     ) {
       filterByGlobalInput();
     }
@@ -337,6 +396,7 @@ const createSelectedElem = (selectedTag, parentElem) => {
     // update tag list
     createLiTags(extractIncludedTags("appliance"), divListAppliance);
     createLiTags(extractIncludedTags("ustensils"), divListUstensils);
+    createLiTags(extractIncludedTags("ingredients"), divListIngredients);
   });
 };
 
