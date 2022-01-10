@@ -120,7 +120,7 @@ i.fa-chevron-up {
   display: block;
 } */
 /* Show the input field and the dropdown menu (Ingredients) on focus */
-.search-tag-button__ingredients:focus #search-tag-input__ingredient {
+/* .search-tag-button__ingredients:focus #search-tag-input__ingredient {
   display: block;
 }
 .search-tag-button__ingredients:focus #search-tag-title {
@@ -131,7 +131,7 @@ i.fa-chevron-up {
 }
 .search-tag-button__ingredients:focus .fa-chevron-up {
   display: inline-block;
-}
+} */
 
 /* Recipes styling */
 .cards {
