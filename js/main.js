@@ -137,15 +137,49 @@ const extractIncludedTags = (recipeElemType) => {
   recipes.forEach((recipe) => {
     if (idsDisplayedRecipe.includes(recipe.id)) {
       if (recipe[recipeElemType] === recipe.ingredients) {
-        recipe.ingredients.forEach((ingredient) => {
-          includedTags.push(ingredient.ingredient);
+        recipe[recipeElemType].forEach((elem) => {
+          includedTags.push(elem.ingredient);
         });
+        console.log(includedTags);
       } else if (recipe[recipeElemType] === recipe.ustensils) {
         let normalised = [];
         recipe[recipeElemType].forEach((elem) => {
           normalised.push(normalise(elem));
         });
         includedTags = includedTags.concat(normalised);
+        console.log(includedTags);
+      } else {
+        includedTags.push(recipe[recipeElemType]);
+      }
+    }
+  });
+  let includedTagsUnique = [...new Set(includedTags)];
+
+  return includedTagsUnique;
+};
+
+const extractIncludedValue = (recipeElemType, inputValue) => {
+  let includedTags = [];
+  recipes.forEach((recipe) => {
+    if (idsDisplayedRecipe.includes(recipe.id)) {
+      if (recipe[recipeElemType] === recipe.ingredients) {
+        recipe[recipeElemType].forEach((elem) => {
+          if (elem.ingredient.toLowerCase().includes(inputValue)) {
+            includedTags.push(elem.ingredient);
+            console.log(elem.ingredient);
+          }
+        });
+      } else if (recipe[recipeElemType] === recipe.ustensils) {
+        console.log("this is an ustensil");
+        let normalised = [];
+        recipe[recipeElemType].forEach((elem) => {
+          if (elem.toLowerCase().includes(inputValue)) {
+            console.log(elem);
+            normalised.push(normalise(elem));
+          }
+        });
+        includedTags = includedTags.concat(normalised);
+        console.log(includedTags);
       } else {
         includedTags.push(recipe[recipeElemType]);
       }
@@ -182,9 +216,16 @@ const createLiTags = (tagList, parentElem) => {
     li.addEventListener("click", (e) => {
       filterByTag(e, "appliance");
       createLiTags(extractIncludedTags("appliance"), divListAppliance);
+      removeTagList(divListAppliance);
       createSelectedElem(e.target.textContent, divFilteredList);
       selectedApplianceTags.push(e.target.textContent);
       console.log("selectedApplianceTags", selectedApplianceTags);
+
+      const liTarget = e.target.closest("li");
+      console.log(liTarget);
+      liTarget.remove();
+      // const display = (liTarget.style.display = "none");
+      // console.log(display);
     });
   });
 
@@ -192,6 +233,7 @@ const createLiTags = (tagList, parentElem) => {
     li.addEventListener("click", (e) => {
       filterByTag(e, "ustensils");
       createLiTags(extractIncludedTags("ustensils"), divListUstensils);
+      removeTagList(divListUstensils);
       createSelectedElem(e.target.textContent, divFilteredList);
       selectedUstensilsTags.push(e.target.textContent);
       console.log("selectedUstensilsTags", selectedUstensilsTags);
@@ -202,11 +244,17 @@ const createLiTags = (tagList, parentElem) => {
     li.addEventListener("click", (e) => {
       filterByTag(e, "ingredients");
       createLiTags(extractIncludedTags("ingredients"), divListIngredients);
+      removeTagList(divListIngredients);
       createSelectedElem(e.target.textContent, divFilteredList);
       selectedIngredientsTags.push(e.target.textContent);
       console.log("selectedIngredientsTags", selectedIngredientsTags);
     });
   });
+};
+
+// function which removes tag list after clicking on a tag
+const removeTagList = (parentElem) => {
+  parentElem.innerHTML = "";
 };
 
 // function which filter recipes by clicked tag
@@ -408,34 +456,50 @@ const createSelectedElem = (selectedTag, parentElem) => {
     createLiTags(extractIncludedTags("appliance"), divListAppliance);
     createLiTags(extractIncludedTags("ustensils"), divListUstensils);
     createLiTags(extractIncludedTags("ingredients"), divListIngredients);
+
+    removeTagList(divListAppliance);
+    removeTagList(divListUstensils);
+    removeTagList(divListIngredients);
   });
 };
 
 // register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
 inputAppliance.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
+  removeTagList(divListUstensils);
+  removeTagList(divListIngredients);
 });
 
 // register click event on the ustensils search input -> display ustensils tags (included in currently displayed recipes)
 inputUstensil.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("ustensils"), divListUstensils);
+  removeTagList(divListAppliance);
+  removeTagList(divListIngredients);
 });
 
 // register click event on the ingredients search input -> display ingredients tags (included in currently displayed recipes)
 inputIngredient.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("ingredients"), divListIngredients);
+  removeTagList(divListAppliance);
+  removeTagList(divListUstensils);
 });
 // register click event on the appliance chevron icon -> display appliance tags (included in currently displayed recipes)
 chevronAppliance.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
+  removeTagList(divListUstensils);
+  removeTagList(divListIngredients);
 });
 // register click event on the ustensils chevron icon -> display ustensils tags (included in currently displayed recipes)
 chevronUstensils.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("ustensils"), divListUstensils);
+  removeTagList(divListAppliance);
+  removeTagList(divListIngredients);
 });
 // register click event on the ingredients chevron icon -> display ingredients tags (included in currently displayed recipes)
 chevronIngredients.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("ingredients"), divListIngredients);
+  removeTagList(divListAppliance);
+  removeTagList(divListUstensils);
 });
 
 // register keyup event on the appliance search input -> display corresponding recipes and filtered tags
@@ -476,7 +540,10 @@ inputAppliance.addEventListener("keyup", (e) => {
     console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
     // display the targeted tags
-    createLiTags(extractIncludedTags("appliance"), divListAppliance);
+    createLiTags(
+      extractIncludedValue("appliance", inputApplianceValue),
+      divListAppliance
+    );
 
     // if there isn't any recipe which includes the input value then display the message
     message(isAnyApplianceIncluded);
@@ -526,14 +593,17 @@ inputUstensil.addEventListener("keyup", (e) => {
     console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
     // display the targeted tags
-    createLiTags(extractIncludedTags("ustensils"), divListUstensils);
+    createLiTags(
+      extractIncludedValue("ustensils", inputUstensilValue),
+      divListUstensils
+    );
 
     // if there isn't any recipe which includes the input value then display the message
     message(isAnyUstensilIncluded);
   }
 });
 
-// register keyup event on the igredient search input -> display corresponding recipes and filtered tags
+// register keyup event on the ingredient search input -> display corresponding recipes and filtered tags
 inputIngredient.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
   if (inputIngredient.validity.valid) {
@@ -578,7 +648,10 @@ inputIngredient.addEventListener("keyup", (e) => {
     console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
     // display the targeted tags
-    createLiTags(extractIncludedTags("ingredients"), divListIngredients);
+    createLiTags(
+      extractIncludedValue("ingredients", inputIngredientValue),
+      divListIngredients
+    );
 
     // if there isn't any recipe which includes the input value then display the message
     message(isAnyIngredientIncluded);
