@@ -384,7 +384,7 @@ const createSelectedElem = (selectedTag, parentElem) => {
   const liElem = document.createElement("li");
   liElem.classList.add("selected-tag");
   liElem.innerHTML += `${selectedTag}<i class="far fa-times-circle"></i>`;
-  // remove empty spaces from the tag name so it becomes a valuable ID name
+  // remove empty spaces from the tag name so it becomes a valid ID name
   selectedTag = selectedTag.replaceAll(" ", "-");
   liElem.setAttribute("id", `${selectedTag}`);
 
@@ -405,21 +405,15 @@ const createSelectedElem = (selectedTag, parentElem) => {
 
     // check if the tag is ingredients/ustensils/appliance tag
     if (selectedIngredientsTags.includes(liTargetContent)) {
-      console.log("The closed tag is an ingredient tag");
       // find the index of the closed tag in the array of tags
-      const ingredientsIndex = selectedIngredientsTags.indexOf(liTarget.id);
+      const ingredientsIndex = selectedIngredientsTags.indexOf(liTargetContent);
       // remove the targeted tag form the array
       selectedIngredientsTags.splice(ingredientsIndex, 1);
     } else if (selectedUstensilsTags.includes(liTargetContent)) {
-      console.log("The closed tag is:", liTarget);
-      const ustensilsIndex = selectedUstensilsTags.indexOf(liTarget.id);
-      console.log(selectedUstensilsTags);
-      console.log("liTarget.id", liTarget.id);
+      const ustensilsIndex = selectedUstensilsTags.indexOf(liTargetContent);
       selectedUstensilsTags.splice(ustensilsIndex, 1);
-      console.log("ustensilsIndex", ustensilsIndex);
     } else {
-      console.log("The closed tag is an appliance tag");
-      const applianceIndex = selectedApplianceTags.indexOf(liTarget.id);
+      const applianceIndex = selectedApplianceTags.indexOf(liTargetContent);
       selectedApplianceTags.splice(applianceIndex, 1);
     }
 
