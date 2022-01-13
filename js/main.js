@@ -32,24 +32,6 @@ const selectedApplianceTags = [];
 const selectedUstensilsTags = [];
 const selectedIngredientsTags = [];
 
-// function which checks the validity of the input value
-const isInputValid = (input) => {
-  if (input.validity.valid) {
-    return true;
-  }
-};
-
-// function which displays a message if no correcpondig recipe
-const message = (arrayOfBooleans) => {
-  if (!arrayOfBooleans.some((item) => item === true)) {
-    result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
-      chercher « tarte aux pommes », « poisson », etc.</p>`;
-  }
-};
-
-// function which normalise the format of a tag
-const normalise = (elem) => elem[0].toUpperCase() + elem.slice(1).toLowerCase();
-
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
   let recipeHtml = document.createElement("div");
@@ -86,13 +68,26 @@ recipes.forEach((recipe) => {
   createRecipeElem(recipe);
   idsDisplayedRecipe.push(recipe.id);
 });
-console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 
-// function which retrieves value from global input and displays corresponding recipes
+// function which checks the validity of the input value
+const isInputValid = (input) => {
+  if (input.validity.valid) {
+    return true;
+  }
+};
+
+// function which displays a message if no correcpondig recipe
+const message = (arrayOfBooleans) => {
+  if (!arrayOfBooleans.some((item) => item === true)) {
+    result.innerHTML = `<p class="no-result-message">Aucune recette ne correspond à votre critère… vous pouvez
+      chercher « tarte aux pommes », « poisson », etc.</p>`;
+  }
+};
+
+// function which retrieves value from the global input and displays corresponding recipes
 const globalInputSearch = () => {
   // get the user's input value
   const inputGlobalValue = searchInputGlobal.value.toLowerCase();
-  console.log(inputGlobalValue);
 
   // empty the gallery and the global variable
   result.innerHTML = "";
@@ -128,8 +123,8 @@ const globalInputSearch = () => {
   });
   // display a message when there isn't any recipe which includes the input value
   message(isAnyIncluded);
-  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
 };
+
 // register keyup event on the global search input -> display corresponding recipes
 searchInputGlobal.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
@@ -139,68 +134,6 @@ searchInputGlobal.addEventListener("keyup", (e) => {
     globalInputSearch();
   }
 });
-
-// function which extracts tags (included in currently displayed recipes) into an array; returns the array
-const extractIncludedTags = (recipeElemType) => {
-  let includedTags = [];
-  recipes.forEach((recipe) => {
-    if (idsDisplayedRecipe.includes(recipe.id)) {
-      if (recipe[recipeElemType] === recipe.ingredients) {
-        recipe[recipeElemType].forEach((elem) => {
-          includedTags.push(elem.ingredient);
-        });
-      } else if (recipe[recipeElemType] === recipe.ustensils) {
-        let normalised = [];
-        recipe[recipeElemType].forEach((elem) => {
-          normalised.push(normalise(elem));
-        });
-        includedTags = includedTags.concat(normalised);
-      } else {
-        includedTags.push(recipe[recipeElemType]);
-      }
-    }
-  });
-  let includedTagsUnique = [...new Set(includedTags)];
-
-  return includedTagsUnique;
-};
-
-// function which extracts tags based on the input value into an array; returns the array
-const extractIncludedValue = (recipeElemType, inputValue) => {
-  let includedTags = [];
-  recipes.forEach((recipe) => {
-    if (idsDisplayedRecipe.includes(recipe.id)) {
-      if (recipe[recipeElemType] === recipe.ingredients) {
-        console.log("this is an ingredient");
-        recipe[recipeElemType].forEach((elem) => {
-          if (elem.ingredient.toLowerCase().includes(inputValue)) {
-            includedTags.push(elem.ingredient);
-            console.log(elem.ingredient);
-          }
-        });
-        console.log(includedTags);
-      } else if (recipe[recipeElemType] === recipe.ustensils) {
-        console.log("this is an ustensil");
-        let normalised = [];
-        recipe[recipeElemType].forEach((elem) => {
-          console.log(elem);
-          if (elem.toLowerCase().includes(inputValue)) {
-            console.log(elem);
-            normalised.push(normalise(elem));
-          }
-        });
-        includedTags = includedTags.concat(normalised);
-        console.log(includedTags);
-      } else {
-        console.log("this is an appliance");
-        includedTags.push(recipe[recipeElemType]);
-      }
-    }
-  });
-  let includedTagsUnique = [...new Set(includedTags)];
-
-  return includedTagsUnique;
-};
 
 // function which creates tag's list HTML and register event on each tag
 const createLiTags = (tagList, parentElem) => {
@@ -231,7 +164,6 @@ const createLiTags = (tagList, parentElem) => {
       removeTagList(divListAppliance);
       createSelectedElem(e.target.textContent, divFilteredList);
       selectedApplianceTags.push(e.target.textContent);
-      console.log("selectedApplianceTags", selectedApplianceTags);
     });
   });
 
@@ -242,7 +174,6 @@ const createLiTags = (tagList, parentElem) => {
       removeTagList(divListUstensils);
       createSelectedElem(e.target.textContent, divFilteredList);
       selectedUstensilsTags.push(e.target.textContent);
-      console.log("selectedUstensilsTags", selectedUstensilsTags);
     });
   });
 
@@ -253,14 +184,8 @@ const createLiTags = (tagList, parentElem) => {
       removeTagList(divListIngredients);
       createSelectedElem(e.target.textContent, divFilteredList);
       selectedIngredientsTags.push(e.target.textContent);
-      console.log("selectedIngredientsTags", selectedIngredientsTags);
     });
   });
-};
-
-// function which removes tag list
-const removeTagList = (parentElem) => {
-  parentElem.innerHTML = "";
 };
 
 // function which filter recipes by clicked tag
@@ -268,7 +193,6 @@ const filterByTag = (event, recipeElemType) => {
   let tempIds = [];
   let clickedTag = event.target.textContent;
   result.innerHTML = "";
-  console.log(idsDisplayedRecipe);
 
   recipes.forEach((recipe) => {
     let ingredients = [];
@@ -295,103 +219,39 @@ const filterByTag = (event, recipeElemType) => {
     }
   });
   idsDisplayedRecipe = tempIds;
-  console.log(idsDisplayedRecipe);
 };
 
-// function which filter recipes by selected appliance tags
-const filterBySelectedApplianceTags = () => {
-  let tempIds = [];
-  result.innerHTML = "";
-  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-  console.log("selectedApplianceTags", selectedApplianceTags);
-  console.log("selectedUstensilsTags", selectedUstensilsTags);
+// function which normalise the format of a tag
+const normalise = (elem) => elem[0].toUpperCase() + elem.slice(1).toLowerCase();
 
+// function which extracts tags (included in currently displayed recipes) into an array; returns the array
+const extractIncludedTags = (recipeElemType) => {
+  let includedTags = [];
   recipes.forEach((recipe) => {
-    for (let tag of selectedApplianceTags) {
-      if (
-        tag === recipe.appliance &&
-        idsDisplayedRecipe.includes(recipe.id) &&
-        !tempIds.includes(recipe.id)
-      ) {
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
+    if (idsDisplayedRecipe.includes(recipe.id)) {
+      if (recipe[recipeElemType] === recipe.ingredients) {
+        recipe[recipeElemType].forEach((elem) => {
+          includedTags.push(elem.ingredient);
+        });
+      } else if (recipe[recipeElemType] === recipe.ustensils) {
+        let normalised = [];
+        recipe[recipeElemType].forEach((elem) => {
+          normalised.push(normalise(elem));
+        });
+        includedTags = includedTags.concat(normalised);
+      } else {
+        includedTags.push(recipe[recipeElemType]);
       }
     }
   });
-  idsDisplayedRecipe = tempIds;
-  console.log(idsDisplayedRecipe);
+  let includedTagsUnique = [...new Set(includedTags)];
+
+  return includedTagsUnique;
 };
 
-// function which filter recipes by selected ustensils tags
-const filterBySelectedUstensilsTags = () => {
-  let tempIds = [];
-  result.innerHTML = "";
-  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-  console.log("selectedApplianceTags", selectedApplianceTags);
-  console.log("selectedUstensilsTags", selectedUstensilsTags);
-
-  recipes.forEach((recipe) => {
-    let normalised = [];
-    recipe.ustensils.forEach((elem) => {
-      normalised.push(normalise(elem));
-    });
-    for (let tag of selectedUstensilsTags) {
-      if (
-        normalised.includes(tag) &&
-        idsDisplayedRecipe.includes(recipe.id) &&
-        !tempIds.includes(recipe.id)
-      ) {
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-      }
-    }
-  });
-  idsDisplayedRecipe = tempIds;
-  console.log(idsDisplayedRecipe);
-};
-
-// function which filter recipes by selected ustensils tags
-const filterBySelectedIngredientsTags = () => {
-  let tempIds = [];
-  result.innerHTML = ""; // peut etre il faut changer ca
-  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-  console.log("selectedApplianceTags", selectedApplianceTags);
-  console.log("selectedUstensilsTags", selectedUstensilsTags);
-
-  recipes.forEach((recipe) => {
-    let ingredients = [];
-    recipe.ingredients.forEach((elem) => {
-      ingredients.push(elem.ingredient);
-    });
-    for (let tag of selectedIngredientsTags) {
-      if (
-        ingredients.includes(tag) &&
-        idsDisplayedRecipe.includes(recipe.id) &&
-        !tempIds.includes(recipe.id)
-      ) {
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-      }
-    }
-  });
-  idsDisplayedRecipe = tempIds;
-  console.log(idsDisplayedRecipe);
-};
-
-// function which conditions the update of recipes depending on the global input
-const filterByGlobalInput = () => {
-  if (searchInputGlobal.value === "") {
-    idsDisplayedRecipe = [];
-    console.log("ther's NO value in input global");
-    recipes.forEach((recipe) => {
-      createRecipeElem(recipe);
-      idsDisplayedRecipe.push(recipe.id);
-    });
-  } else {
-    console.log("ther's a value in input global");
-    globalInputSearch();
-  }
-  console.log("idsDisplayedRecipe", idsDisplayedRecipe);
+// function which removes tag list
+const removeTagList = (parentElem) => {
+  parentElem.innerHTML = "";
 };
 
 // function which creates selected tag's HTML and register event on each closing icon
@@ -455,6 +315,87 @@ const createSelectedElem = (selectedTag, parentElem) => {
   });
 };
 
+// function which conditions the update of recipes depending on the global input
+const filterByGlobalInput = () => {
+  if (searchInputGlobal.value === "") {
+    idsDisplayedRecipe = [];
+    recipes.forEach((recipe) => {
+      createRecipeElem(recipe);
+      idsDisplayedRecipe.push(recipe.id);
+    });
+  } else {
+    globalInputSearch();
+  }
+};
+
+// function which filter recipes by selected appliance tags
+const filterBySelectedApplianceTags = () => {
+  let tempIds = [];
+  result.innerHTML = "";
+
+  recipes.forEach((recipe) => {
+    for (let tag of selectedApplianceTags) {
+      if (
+        tag === recipe.appliance &&
+        idsDisplayedRecipe.includes(recipe.id) &&
+        !tempIds.includes(recipe.id)
+      ) {
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+};
+
+// function which filter recipes by selected ustensils tags
+const filterBySelectedUstensilsTags = () => {
+  let tempIds = [];
+  result.innerHTML = "";
+
+  recipes.forEach((recipe) => {
+    let normalised = [];
+    recipe.ustensils.forEach((elem) => {
+      normalised.push(normalise(elem));
+    });
+    for (let tag of selectedUstensilsTags) {
+      if (
+        normalised.includes(tag) &&
+        idsDisplayedRecipe.includes(recipe.id) &&
+        !tempIds.includes(recipe.id)
+      ) {
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+};
+
+// function which filter recipes by selected ustensils tags
+const filterBySelectedIngredientsTags = () => {
+  let tempIds = [];
+  result.innerHTML = "";
+
+  recipes.forEach((recipe) => {
+    let ingredients = [];
+    recipe.ingredients.forEach((elem) => {
+      ingredients.push(elem.ingredient);
+    });
+    for (let tag of selectedIngredientsTags) {
+      if (
+        ingredients.includes(tag) &&
+        idsDisplayedRecipe.includes(recipe.id) &&
+        !tempIds.includes(recipe.id)
+      ) {
+        createRecipeElem(recipe);
+        tempIds.push(recipe.id);
+      }
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+};
+
 // register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
 inputAppliance.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
@@ -507,7 +448,6 @@ const filterRecipesA = (recipeElemType, input, array) => {
 
     // display the targeted recipe and stock ids of displayed recipes
     if (isApplianceIncluded && idsDisplayedRecipe.includes(recipe.id)) {
-      console.log("ID recipe to show", recipe.id);
       createRecipeElem(recipe);
       tempIds.push(recipe.id);
       array.push(idsDisplayedRecipe.includes(recipe.id));
@@ -528,10 +468,8 @@ const filterRecipesIU = (recipeElemType, input, array) => {
     // fill in the array with boolean values
     recipe[recipeElemType].forEach((elem) => {
       if (recipe[recipeElemType] === recipe.ingredients) {
-        console.log("this is an ingredient");
         isAny.push(elem.ingredient.toLowerCase().includes(input));
       } else {
-        console.log("this is an ustensil");
         isAny.push(elem.toLowerCase().includes(input));
       }
     });
@@ -546,6 +484,35 @@ const filterRecipesIU = (recipeElemType, input, array) => {
     }
   });
   idsDisplayedRecipe = tempIds;
+};
+
+// function which extracts tags based on the input value into an array; returns the array
+const extractIncludedValue = (recipeElemType, inputValue) => {
+  let includedTags = [];
+  recipes.forEach((recipe) => {
+    if (idsDisplayedRecipe.includes(recipe.id)) {
+      if (recipe[recipeElemType] === recipe.ingredients) {
+        recipe[recipeElemType].forEach((elem) => {
+          if (elem.ingredient.toLowerCase().includes(inputValue)) {
+            includedTags.push(elem.ingredient);
+          }
+        });
+      } else if (recipe[recipeElemType] === recipe.ustensils) {
+        let normalised = [];
+        recipe[recipeElemType].forEach((elem) => {
+          if (elem.toLowerCase().includes(inputValue)) {
+            normalised.push(normalise(elem));
+          }
+        });
+        includedTags = includedTags.concat(normalised);
+      } else {
+        includedTags.push(recipe[recipeElemType]);
+      }
+    }
+  });
+  let includedTagsUnique = [...new Set(includedTags)];
+
+  return includedTagsUnique;
 };
 
 // register keyup event on the appliance search input -> display corresponding recipes and filtered tags
