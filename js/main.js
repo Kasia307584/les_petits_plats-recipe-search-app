@@ -32,8 +32,12 @@ const selectedApplianceTags = [];
 const selectedUstensilsTags = [];
 const selectedIngredientsTags = [];
 
-// function which normalise the format of a tag
-const normalise = (elem) => elem[0].toUpperCase() + elem.slice(1).toLowerCase();
+// function which checks the validity of the input value
+const isInputValid = (input) => {
+  if (input.validity.valid) {
+    return true;
+  }
+};
 
 // function which displays a message if no correcpondig recipe
 const message = (arrayOfBooleans) => {
@@ -42,6 +46,9 @@ const message = (arrayOfBooleans) => {
       chercher « tarte aux pommes », « poisson », etc.</p>`;
   }
 };
+
+// function which normalise the format of a tag
+const normalise = (elem) => elem[0].toUpperCase() + elem.slice(1).toLowerCase();
 
 // function which creates recipe's HTML
 const createRecipeElem = (recipe) => {
@@ -126,12 +133,14 @@ const globalInputSearch = () => {
 // register keyup event on the global search input -> display corresponding recipes
 searchInputGlobal.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
-  if (searchInputGlobal.validity.valid) {
+  if (!isInputValid(searchInputGlobal)) {
+    return;
+  } else {
     globalInputSearch();
   }
 });
 
-// function which extracts tags (included in currently displayed recipes) into an array; return the array
+// function which extracts tags (included in currently displayed recipes) into an array; returns the array
 const extractIncludedTags = (recipeElemType) => {
   let includedTags = [];
   recipes.forEach((recipe) => {
@@ -156,21 +165,25 @@ const extractIncludedTags = (recipeElemType) => {
   return includedTagsUnique;
 };
 
+// function which extracts tags based on the input value into an array; returns the array
 const extractIncludedValue = (recipeElemType, inputValue) => {
   let includedTags = [];
   recipes.forEach((recipe) => {
     if (idsDisplayedRecipe.includes(recipe.id)) {
       if (recipe[recipeElemType] === recipe.ingredients) {
+        console.log("this is an ingredient");
         recipe[recipeElemType].forEach((elem) => {
           if (elem.ingredient.toLowerCase().includes(inputValue)) {
             includedTags.push(elem.ingredient);
             console.log(elem.ingredient);
           }
         });
+        console.log(includedTags);
       } else if (recipe[recipeElemType] === recipe.ustensils) {
         console.log("this is an ustensil");
         let normalised = [];
         recipe[recipeElemType].forEach((elem) => {
+          console.log(elem);
           if (elem.toLowerCase().includes(inputValue)) {
             console.log(elem);
             normalised.push(normalise(elem));
@@ -179,6 +192,7 @@ const extractIncludedValue = (recipeElemType, inputValue) => {
         includedTags = includedTags.concat(normalised);
         console.log(includedTags);
       } else {
+        console.log("this is an appliance");
         includedTags.push(recipe[recipeElemType]);
       }
     }
@@ -244,7 +258,7 @@ const createLiTags = (tagList, parentElem) => {
   });
 };
 
-// function which removes tag list after clicking on a tag
+// function which removes tag list
 const removeTagList = (parentElem) => {
   parentElem.innerHTML = "";
 };
@@ -336,6 +350,7 @@ const filterBySelectedUstensilsTags = () => {
   console.log(idsDisplayedRecipe);
 };
 
+// function which filter recipes by selected ustensils tags
 const filterBySelectedIngredientsTags = () => {
   let tempIds = [];
   result.innerHTML = ""; // peut etre il faut changer ca
@@ -479,49 +494,76 @@ chevronIngredients.addEventListener("click", (e) => {
   removeTagList(divListUstensils);
 });
 
+// function which filter recipes according to the input value (appliance)
+const filterRecipesA = (recipeElemType, input, array) => {
+  // empty the gallery
+  result.innerHTML = "";
+  // initialise variables
+  let tempIds = []; // temporary variable
+  let isApplianceIncluded = false;
+  // loop through recipes
+  recipes.forEach((recipe) => {
+    isApplianceIncluded = recipe[recipeElemType].toLowerCase().includes(input);
+
+    // display the targeted recipe and stock ids of displayed recipes
+    if (isApplianceIncluded && idsDisplayedRecipe.includes(recipe.id)) {
+      console.log("ID recipe to show", recipe.id);
+      createRecipeElem(recipe);
+      tempIds.push(recipe.id);
+      array.push(idsDisplayedRecipe.includes(recipe.id));
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+};
+
+// function which filter recipes according to the input value (ingredients and ustensils)
+const filterRecipesIU = (recipeElemType, input, array) => {
+  // empty the gallery
+  result.innerHTML = "";
+  // initialise variables
+  let tempIds = []; // temporary variable
+  // loop through recipes
+  recipes.forEach((recipe) => {
+    let isAny = []; // booleans true/false depending if value inculded in ingredient
+    // fill in the array with boolean values
+    recipe[recipeElemType].forEach((elem) => {
+      if (recipe[recipeElemType] === recipe.ingredients) {
+        console.log("this is an ingredient");
+        isAny.push(elem.ingredient.toLowerCase().includes(input));
+      } else {
+        console.log("this is an ustensil");
+        isAny.push(elem.toLowerCase().includes(input));
+      }
+    });
+    // display the targeted recipe and stock ids of displayed recipes
+    if (
+      isAny.some((item) => item === true) &&
+      idsDisplayedRecipe.includes(recipe.id)
+    ) {
+      createRecipeElem(recipe);
+      tempIds.push(recipe.id);
+      array.push(idsDisplayedRecipe.includes(recipe.id));
+    }
+  });
+  idsDisplayedRecipe = tempIds;
+};
+
 // register keyup event on the appliance search input -> display corresponding recipes and filtered tags
 inputAppliance.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
-  if (inputAppliance.validity.valid) {
+  if (!isInputValid(inputAppliance)) {
+    return;
+  } else {
     // get the user's input value
     const inputApplianceValue = inputAppliance.value.toLowerCase();
-    console.log(inputApplianceValue);
-
-    // empty the gallery
-    result.innerHTML = "";
-
-    // initialise variables
-    let isApplianceIncluded = false;
     let isAnyApplianceIncluded = []; // booleans true if value included in the recipe
-    let tempIds = []; // temporary variable
-
-    console.log("isAnyApplianceIncluded", isAnyApplianceIncluded);
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-    console.log("tempIdsDisplayedRecipe", tempIds);
-
-    // loop through recipes
-    recipes.forEach((recipe) => {
-      isApplianceIncluded = recipe.appliance
-        .toLowerCase()
-        .includes(inputApplianceValue);
-
-      // display the targeted recipe and stock ids of displayed recipes
-      if (isApplianceIncluded && idsDisplayedRecipe.includes(recipe.id)) {
-        console.log("ID recipe to show", recipe.id);
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-        isAnyApplianceIncluded.push(idsDisplayedRecipe.includes(recipe.id));
-      }
-    });
-    idsDisplayedRecipe = tempIds;
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-
+    // display the targeted recipes
+    filterRecipesA("appliance", inputApplianceValue, isAnyApplianceIncluded);
     // display the targeted tags
     createLiTags(
       extractIncludedValue("appliance", inputApplianceValue),
       divListAppliance
     );
-
     // if there isn't any recipe which includes the input value then display the message
     message(isAnyApplianceIncluded);
   }
@@ -530,51 +572,19 @@ inputAppliance.addEventListener("keyup", (e) => {
 // register keyup event on the ustensil search input -> display corresponding recipes and filtered tags
 inputUstensil.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
-  if (inputUstensil.validity.valid) {
+  if (!isInputValid(inputUstensil)) {
+    return;
+  } else {
     // get the user's input value
-    const inputUstensilValue = inputUstensil.value.toLowerCase();
-    console.log(inputUstensilValue);
-
-    // empty the gallery
-    result.innerHTML = "";
-
-    // initialise variables
+    const inputUstensilValue = inputUstensil.value.toLowerCase(); // get the user's input value
     let isAnyUstensilIncluded = []; // booleans true if value included in the recipe
-    let tempIds = []; // temporary variable
-
-    console.log("isAnyUstensilIncluded", isAnyUstensilIncluded);
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-    console.log("tempIdsDisplayedRecipe", tempIds);
-
-    // loop through recipes
-    recipes.forEach((recipe) => {
-      let isAny = []; // booleans true/false depending if value inculded in ustensil
-
-      // fill in the array with boolean values
-      recipe.ustensils.forEach((ustensil) => {
-        isAny.push(ustensil.toLowerCase().includes(inputUstensilValue));
-      });
-
-      // display the targeted recipe and stock ids of displayed recipes
-      if (
-        isAny.some((item) => item === true) &&
-        idsDisplayedRecipe.includes(recipe.id)
-      ) {
-        console.log("ID recipe to show", recipe.id);
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-        isAnyUstensilIncluded.push(idsDisplayedRecipe.includes(recipe.id));
-      }
-    });
-    idsDisplayedRecipe = tempIds;
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-
+    // display the targeted recipes
+    filterRecipesIU("ustensils", inputUstensilValue, isAnyUstensilIncluded);
     // display the targeted tags
     createLiTags(
       extractIncludedValue("ustensils", inputUstensilValue),
       divListUstensils
     );
-
     // if there isn't any recipe which includes the input value then display the message
     message(isAnyUstensilIncluded);
   }
@@ -583,54 +593,24 @@ inputUstensil.addEventListener("keyup", (e) => {
 // register keyup event on the ingredient search input -> display corresponding recipes and filtered tags
 inputIngredient.addEventListener("keyup", (e) => {
   // check that at least 3 characters have been entred in the input field
-  if (inputIngredient.validity.valid) {
+  if (!isInputValid(inputIngredient)) {
+    return;
+  } else {
     // get the user's input value
-    const inputIngredientValue = inputIngredient.value.toLowerCase();
-    console.log(inputIngredientValue);
-
-    // empty the gallery
-    result.innerHTML = "";
-
-    // initialise variables
+    const inputIngredientValue = inputIngredient.value.toLowerCase(); // get the user's input value
     let isAnyIngredientIncluded = []; // booleans true if value included in the recipe
-    let tempIds = []; // temporary variable
-
-    console.log("isAnyIngredientIncluded", isAnyIngredientIncluded);
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-    console.log("tempIdsDisplayedRecipe", tempIds);
-
-    // loop through recipes
-    recipes.forEach((recipe) => {
-      let isAny = []; // booleans true/false depending if value inculded in ingredient
-
-      // fill in the array with boolean values
-      recipe.ingredients.forEach((ingredient) => {
-        isAny.push(
-          ingredient.ingredient.toLowerCase().includes(inputIngredientValue)
-        );
-      });
-
-      // display the targeted recipe and stock ids of displayed recipes
-      if (
-        isAny.some((item) => item === true) &&
-        idsDisplayedRecipe.includes(recipe.id)
-      ) {
-        console.log("ID recipe to show", recipe.id);
-        createRecipeElem(recipe);
-        tempIds.push(recipe.id);
-        isAnyIngredientIncluded.push(idsDisplayedRecipe.includes(recipe.id));
-      }
-    });
-    idsDisplayedRecipe = tempIds;
-    console.log("idsDisplayedRecipe", idsDisplayedRecipe);
-
+    // display the targeted recipes
+    filterRecipesIU(
+      "ingredients",
+      inputIngredientValue,
+      isAnyIngredientIncluded
+    );
     // display the targeted tags
     createLiTags(
       extractIncludedValue("ingredients", inputIngredientValue),
       divListIngredients
     );
-
-    // if there isn't any recipe which includes the input value then display the message
+    // display the message when there isn't any recipe corresponding to the input value
     message(isAnyIngredientIncluded);
   }
 });
