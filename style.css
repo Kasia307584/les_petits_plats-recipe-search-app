@@ -36,7 +36,7 @@ header {
   display: flex;
   justify-content: space-between;
   background-color: #e6e3e3;
-  padding: 1em;
+  padding: 1.3em;
   margin-bottom: 1.5em;
   border-radius: 5px;
 }
@@ -46,27 +46,36 @@ input {
   width: 70%;
   outline: none;
 }
-.search-global__input i {
-  font-size: 1.4em;
+.search-global-form i {
+  font-size: 25px;
 }
 
-/* Applied filter tag styling */
-.selected-tags {
-  height: 90px;
-}
+/* Selected tags styling */
 .selected-wrapper ul {
   display: flex;
   margin: 0;
   padding: 0;
+  margin-bottom: 1em;
 }
 .selected-tag {
   padding: 0.5em;
   background-color: rgb(114, 192, 147);
   color: white;
-  width: 100px;
   list-style-type: none;
   border-radius: 5px;
   margin-right: 0.5em;
+}
+.selected-tag i {
+  margin-left: 10px;
+}
+.category-appliance {
+  background-color: rgb(114, 192, 147);
+}
+.category-ustensils {
+  background-color: rgb(231, 86, 86);
+}
+.category-ingredients {
+  background-color: rgb(84, 137, 252);
 }
 
 /* Specific search styling */
@@ -74,36 +83,46 @@ input {
   display: flex;
   margin-bottom: 1.5em;
 }
+.tag-wrapper button:nth-child(n) {
+  cursor: pointer;
+}
 button input:focus {
-  color: red;
+  color: white;
 }
-.tag-wrapper {
-  flex-direction: column;
+button input::placeholder {
+  color: white;
+  font-size: 16px;
 }
+/* .clicked-button {
+  width: 400px;
+} */
 .tag-wrapper div:nth-child(n) {
-  /* height: 300px; */
-  /* width: 300px; */
   position: absolute;
   z-index: 10;
-  background-color: rgb(114, 192, 147);
   color: white;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  /* display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 2em; */
 }
 .tag-wrapper div:nth-child(n) ul {
   margin: 0;
-  padding: 0.5em;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  /* background-color: rgb(114, 192, 147); */
+  min-width: 133px;
+  max-height: 500px;
 }
 .tag-wrapper div:nth-child(n) ul li {
   list-style-type: none;
   padding: 0.3em;
-}
-.tag-wrapper button:nth-child(n) {
   cursor: pointer;
+  background-color: rgb(114, 192, 147);
+  width: 170px;
 }
+/* .search-tag-list__ingredients {
+  background-color: rgb(84, 137, 252);
+} */
 .search-tag-button__ingredients {
   background-color: rgb(84, 137, 252);
 }
@@ -116,22 +135,6 @@ button input:focus {
 i.fa-chevron-up {
   display: none;
 }
-/* .search-tag-button__appliance:focus .search-tag-list__appliance {
-  display: block;
-} */
-/* Show the input field and the dropdown menu (Ingredients) on focus */
-/* .search-tag-button__ingredients:focus #search-tag-input__ingredient {
-  display: block;
-}
-.search-tag-button__ingredients:focus #search-tag-title {
-  display: none;
-}
-.search-tag-button__ingredients:focus .fa-chevron-down {
-  display: none;
-}
-.search-tag-button__ingredients:focus .fa-chevron-up {
-  display: inline-block;
-} */
 
 /* Recipes styling */
 .cards {
@@ -143,6 +146,7 @@ i.fa-chevron-up {
   width: 400px;
   height: 400px;
   overflow: hidden;
+  /* -webkit-line-clamp: 4; */
   /* text-overflow: ellipsis;
   white-space: nowrap; */
   margin-bottom: 3em;

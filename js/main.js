@@ -14,11 +14,20 @@ const inputIngredient = document.getElementById("search-tag-input__ingredient");
 const chevronAppliance = document.querySelector(
   ".search-tag-button__appliance i.fa-chevron-down"
 );
+const chevronApplianceUp = document.querySelector(
+  ".search-tag-button__appliance i.fa-chevron-up"
+);
 const chevronUstensils = document.querySelector(
   ".search-tag-button__ustensils i.fa-chevron-down"
 );
+const chevronUstensilsUp = document.querySelector(
+  ".search-tag-button__ustensils i.fa-chevron-up"
+);
 const chevronIngredients = document.querySelector(
   ".search-tag-button__ingredients i.fa-chevron-down"
+);
+const chevronIngredientsUp = document.querySelector(
+  ".search-tag-button__ingredients i.fa-chevron-up"
 );
 let divListApplianceLi = null;
 let divListUstensilsLi = null;
@@ -162,7 +171,7 @@ const createLiTags = (tagList, parentElem) => {
       filterByTag(e, "appliance");
       createLiTags(extractIncludedTags("appliance"), divListAppliance);
       removeTagList(divListAppliance);
-      createSelectedElem(e.target.textContent, divFilteredList);
+      createSelectedElem(e.target.textContent, divFilteredList, "appliance");
       selectedApplianceTags.push(e.target.textContent);
     });
   });
@@ -172,7 +181,7 @@ const createLiTags = (tagList, parentElem) => {
       filterByTag(e, "ustensils");
       createLiTags(extractIncludedTags("ustensils"), divListUstensils);
       removeTagList(divListUstensils);
-      createSelectedElem(e.target.textContent, divFilteredList);
+      createSelectedElem(e.target.textContent, divFilteredList, "ustensils");
       selectedUstensilsTags.push(e.target.textContent);
     });
   });
@@ -182,7 +191,7 @@ const createLiTags = (tagList, parentElem) => {
       filterByTag(e, "ingredients");
       createLiTags(extractIncludedTags("ingredients"), divListIngredients);
       removeTagList(divListIngredients);
-      createSelectedElem(e.target.textContent, divFilteredList);
+      createSelectedElem(e.target.textContent, divFilteredList, "ingredients");
       selectedIngredientsTags.push(e.target.textContent);
     });
   });
@@ -255,10 +264,17 @@ const removeTagList = (parentElem) => {
 };
 
 // function which creates selected tag's HTML and register event on each closing icon
-const createSelectedElem = (selectedTag, parentElem) => {
+const createSelectedElem = (selectedTag, parentElem, categoryOfTag) => {
   const liElem = document.createElement("li");
   liElem.classList.add("selected-tag");
   liElem.innerHTML += `${selectedTag}<i class="far fa-times-circle"></i>`;
+  if (categoryOfTag === "appliance") {
+    liElem.classList.add("category-appliance");
+  } else if (categoryOfTag === "ustensils") {
+    liElem.classList.add("category-ustensils");
+  } else {
+    liElem.classList.add("category-ingredients");
+  }
   // remove empty spaces from the tag name so it becomes a valid ID name
   selectedTag = selectedTag.replaceAll(" ", "-");
   liElem.setAttribute("id", `${selectedTag}`);
@@ -398,6 +414,11 @@ const filterBySelectedIngredientsTags = () => {
 
 // register click event on the appliance search input -> display appliance tags (included in currently displayed recipes)
 inputAppliance.addEventListener("click", (e) => {
+  inputAppliance.value = "";
+  inputAppliance.placeholder = "Rechercher un appareil";
+  // let placeholder = document.querySelectorAll("input::placeholder");
+  // console.log(placeholder);
+  // placeholder.setAttribute("style", "color: grey");
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
   removeTagList(divListUstensils);
   removeTagList(divListIngredients);
@@ -405,6 +426,13 @@ inputAppliance.addEventListener("click", (e) => {
 
 // register click event on the ustensils search input -> display ustensils tags (included in currently displayed recipes)
 inputUstensil.addEventListener("click", (e) => {
+  inputUstensil.value = "";
+  inputUstensil.placeholder = "Rechercher un ustensile";
+  // let button = document.querySelectorAll("button");
+  // console.log(button);
+  // button.addClassName("clicked-button");
+  // button.style.width = "400px";
+  // button.style["-webkit-background-size"] = "400px";
   createLiTags(extractIncludedTags("ustensils"), divListUstensils);
   removeTagList(divListAppliance);
   removeTagList(divListIngredients);
@@ -412,27 +440,59 @@ inputUstensil.addEventListener("click", (e) => {
 
 // register click event on the ingredients search input -> display ingredients tags (included in currently displayed recipes)
 inputIngredient.addEventListener("click", (e) => {
+  inputIngredient.value = "";
+  inputIngredient.placeholder = "Rechercher un ingrédient";
   createLiTags(extractIncludedTags("ingredients"), divListIngredients);
   removeTagList(divListAppliance);
   removeTagList(divListUstensils);
 });
 // register click event on the appliance chevron icon -> display appliance tags (included in currently displayed recipes)
 chevronAppliance.addEventListener("click", (e) => {
+  chevronApplianceUp.style.display = "block";
+  chevronAppliance.style.display = "none";
+  inputAppliance.value = "";
+  inputAppliance.placeholder = "Rechercher un appareil";
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
   removeTagList(divListUstensils);
   removeTagList(divListIngredients);
 });
 // register click event on the ustensils chevron icon -> display ustensils tags (included in currently displayed recipes)
 chevronUstensils.addEventListener("click", (e) => {
+  chevronUstensilsUp.style.display = "block";
+  chevronUstensils.style.display = "none";
+  inputUstensil.value = "";
+  inputUstensil.placeholder = "Rechercher un ustensile";
   createLiTags(extractIncludedTags("ustensils"), divListUstensils);
   removeTagList(divListAppliance);
   removeTagList(divListIngredients);
 });
 // register click event on the ingredients chevron icon -> display ingredients tags (included in currently displayed recipes)
 chevronIngredients.addEventListener("click", (e) => {
+  chevronIngredientsUp.style.display = "block";
+  chevronIngredients.style.display = "none";
+  inputIngredient.value = "";
+  inputIngredient.placeholder = "Rechercher un ingrédient";
   createLiTags(extractIncludedTags("ingredients"), divListIngredients);
   removeTagList(divListAppliance);
   removeTagList(divListUstensils);
+});
+// register click event on the appliance chevron up icon -> remove tag list
+chevronApplianceUp.addEventListener("click", (e) => {
+  chevronApplianceUp.style.display = "none";
+  chevronAppliance.style.display = "block";
+  removeTagList(divListAppliance);
+});
+// register click event on the ustensils chevron up icon -> remove tag list
+chevronUstensilsUp.addEventListener("click", (e) => {
+  chevronUstensilsUp.style.display = "none";
+  chevronUstensils.style.display = "block";
+  removeTagList(divListUstensils);
+});
+// register click event on the ingredients chevron up icon -> remove tag list
+chevronIngredientsUp.addEventListener("click", (e) => {
+  chevronIngredientsUp.style.display = "none";
+  chevronIngredients.style.display = "block";
+  removeTagList(divListIngredients);
 });
 
 // function which filter recipes according to the input value (appliance)

@@ -262,7 +262,7 @@ export const recipes = [
     description:
       "Etaler la pate dans les moules à tartelette. Faire cuire la pate 30 minutes. Découper le chocolat en morceau et le faire chauffer, y ajouter la crême liquide, ajouter le beurre et remuer jusqu'à avoir une pâte homogène. Verser la pate sur les tartelettes. Couper les fraises en 2 et les positionner sur ",
     appliance: "Four",
-    ustensils: ["moule à tartelettes (6)", "casserole"],
+    ustensils: ["moule à tartelettes", "casserole"],
   },
   {
     id: 8,
@@ -487,7 +487,7 @@ export const recipes = [
     servings: 2,
     ingredients: [
       {
-        ingredient: "Saucisse bretonne ou de toulouse",
+        ingredient: "Saucisse bretonne",
         quantity: 2,
       },
       {
@@ -747,7 +747,7 @@ export const recipes = [
         unit: "grammes",
       },
       {
-        ingredient: "Viande hachée 1% de matière grasse",
+        ingredient: "Viande hachée",
         quantity: 400,
         unit: "grammes",
       },
