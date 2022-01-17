@@ -65,7 +65,9 @@ const createRecipeElem = (recipe) => {
                             </div>
                             <div class="recipe-core">
                               <div class="ingredients">${pIngredients}</div>
-                              <p class"description">${recipe.description}</p>
+                              <div class="description-wrapper">
+                                <p>${recipe.description}</p>
+                              </div>
                             </div>
                           </div>`;
 
@@ -173,6 +175,9 @@ const createLiTags = (tagList, parentElem) => {
       removeTagList(divListAppliance);
       createSelectedElem(e.target.textContent, divFilteredList, "appliance");
       selectedApplianceTags.push(e.target.textContent);
+      unformatPlaceholder(inputAppliance, "Appareil");
+      chevronToRemove(chevronApplianceUp);
+      chevronToDisplay(chevronApplianceDown);
     });
   });
 
@@ -183,6 +188,9 @@ const createLiTags = (tagList, parentElem) => {
       removeTagList(divListUstensils);
       createSelectedElem(e.target.textContent, divFilteredList, "ustensils");
       selectedUstensilsTags.push(e.target.textContent);
+      unformatPlaceholder(inputUstensil, "Ustensiles");
+      chevronToRemove(chevronUstensilsUp);
+      chevronToDisplay(chevronUstensilsDown);
     });
   });
 
@@ -193,6 +201,9 @@ const createLiTags = (tagList, parentElem) => {
       removeTagList(divListIngredients);
       createSelectedElem(e.target.textContent, divFilteredList, "ingredients");
       selectedIngredientsTags.push(e.target.textContent);
+      unformatPlaceholder(inputIngredient, "Ingrédients");
+      chevronToRemove(chevronIngredientsUp);
+      chevronToDisplay(chevronIngredientsDown);
     });
   });
 };
@@ -412,13 +423,13 @@ const filterBySelectedIngredientsTags = () => {
   idsDisplayedRecipe = tempIds;
 };
 
-// function which adds a class to manipulate input placeholder
+// function which changes the format of the input placeholder
 const formatPlaceholder = (inputCategory, placeholderValue) => {
   inputCategory.classList.add("new-format-placeholder");
   inputCategory.value = "";
   inputCategory.placeholder = placeholderValue;
 };
-// function which remove a class to manipulate input placeholder
+// function which brings back the format of the input placeholder
 const unformatPlaceholder = (inputCategory, placeholderValue) => {
   inputCategory.classList.remove("new-format-placeholder");
   inputCategory.value = "";
@@ -449,6 +460,12 @@ inputAppliance.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
   removeTagList(divListUstensils);
   removeTagList(divListIngredients);
+  // if (
+  //   document.querySelector(".search-tag-list__appliance ul").style.width <
+  //   "200px"
+  // ) {
+  //   buttonAppliance.classList.add("button-aligned-one");
+  // }
 });
 
 // register click event on the ustensils search input -> display ustensils tags (included in currently displayed recipes)
@@ -542,7 +559,7 @@ chevronIngredientsDown.addEventListener("click", (e) => {
     chevronToRemove(chevronUstensilsUp);
     chevronToDisplay(chevronUstensilsDown);
   }
-  formatPlaceholder(inputIngredient, "ingrédient");
+  formatPlaceholder(inputIngredient, "Rechercher un ingrédient");
   unformatPlaceholder(inputAppliance, "Appareil");
   unformatPlaceholder(inputUstensil, "Ustensiles");
   createLiTags(extractIncludedTags("ingredients"), divListIngredients);
@@ -553,18 +570,21 @@ chevronIngredientsDown.addEventListener("click", (e) => {
 chevronApplianceUp.addEventListener("click", (e) => {
   chevronToDisplay(chevronApplianceDown);
   chevronToRemove(chevronApplianceUp);
+  unformatPlaceholder(inputAppliance, "Appareil");
   removeTagList(divListAppliance);
 });
 // register click event on the ustensils chevron up icon -> remove tag list
 chevronUstensilsUp.addEventListener("click", (e) => {
   chevronToDisplay(chevronUstensilsDown);
   chevronToRemove(chevronUstensilsUp);
+  unformatPlaceholder(inputUstensil, "Ustensiles");
   removeTagList(divListUstensils);
 });
 // register click event on the ingredients chevron up icon -> remove tag list
 chevronIngredientsUp.addEventListener("click", (e) => {
-  chevronToDisplay(chevronUstensilsDown);
-  chevronToRemove(chevronUstensilsUp);
+  chevronToDisplay(chevronIngredientsDown);
+  chevronToRemove(chevronIngredientsUp);
+  unformatPlaceholder(inputIngredient, "Ingrédients");
   removeTagList(divListIngredients);
 });
 
