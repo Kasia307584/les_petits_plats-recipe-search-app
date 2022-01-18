@@ -109,29 +109,40 @@ const globalInputSearch = () => {
   let isAnyIncluded = []; // list of booleans true if value included in the recipe
 
   // loop through recipes
-  recipes.forEach((recipe) => {
+  for (let i = 0; i < recipes.length; i++) {
     let arrayOfBooleans = []; // booleans true/false depending if value included in ingredients
 
     // loop through ingredients
-    recipe.ingredients.forEach((ingredient) => {
+    let j = 0;
+    while (j < recipes[i].ingredients.length) {
       arrayOfBooleans.push(
-        ingredient.ingredient.toLowerCase().includes(inputGlobalValue)
+        recipes[i].ingredients[j].ingredient
+          .toLowerCase()
+          .includes(inputGlobalValue)
       );
-    });
-
+      j++;
+    }
+    // loop through array of booleans to find some true
+    let isSomeBooleanTrue = false;
+    for (j = 0; j < arrayOfBooleans.length; j++) {
+      if (arrayOfBooleans[j]) {
+        isSomeBooleanTrue = true;
+        break;
+      }
+    }
     // check that the input text is included in recipes
     isIncluded =
-      recipe.name.toLowerCase().includes(inputGlobalValue) ||
-      recipe.description.toLowerCase().includes(inputGlobalValue) ||
-      arrayOfBooleans.some((item) => item === true);
+      recipes[i].name.toLowerCase().includes(inputGlobalValue) ||
+      recipes[i].description.toLowerCase().includes(inputGlobalValue) ||
+      isSomeBooleanTrue;
 
     // display the targeted recipes and stock ids of displayed recipes
     if (isIncluded) {
-      createRecipeElem(recipe);
+      createRecipeElem(recipes[i]);
       isAnyIncluded.push(isIncluded);
-      idsDisplayedRecipe.push(recipe.id);
+      idsDisplayedRecipe.push(recipes[i].id);
     }
-  });
+  }
   // display a message when there isn't any recipe which includes the input value
   message(isAnyIncluded);
 };

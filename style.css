@@ -158,13 +158,13 @@ i.fa-chevron-up {
 .cards::after {
   content: "";
   flex: 0 0 32%;
-  max-width: 400px;
+  max-width: 440px;
 }
 .recipe {
-  width: 400px;
+  width: 440px;
   height: 400px;
   overflow: hidden;
-  margin-bottom: 3em;
+  margin-bottom: 3.5em;
   border-radius: 5px;
 }
 .image {
