@@ -9,6 +9,12 @@ p,
 h2 {
   margin: 0;
 }
+input {
+  border: none;
+  background-color: unset;
+  width: 70%;
+  outline: none;
+}
 
 /* Header styling */
 header {
@@ -28,12 +34,6 @@ header {
   padding: 1.3em;
   margin-bottom: 1.5em;
   border-radius: 5px;
-}
-input {
-  border: none;
-  background-color: unset;
-  width: 70%;
-  outline: none;
 }
 .search-global-form i {
   font-size: 25px;
@@ -71,6 +71,7 @@ input {
 .search-tag {
   display: flex;
   margin-bottom: 1.5em;
+  position: absolute;
 }
 .search-tag-button__ingredients,
 .search-tag-button__appliance,
@@ -79,7 +80,6 @@ input {
   border-radius: 5px;
   padding: 1.5em 1em;
   margin-right: 1em;
-  /* width: 150px; */
   color: white;
   font-size: 17px;
 }
@@ -102,7 +102,6 @@ input {
 .search-tag-list__appliance,
 .search-tag-list__ustensils {
   max-width: 600px;
-  /* position: absolute; */
   z-index: 10;
   color: white;
   border-bottom-left-radius: 5px;
@@ -117,8 +116,6 @@ input {
   padding-top: 1.3em;
   display: flex;
   flex-wrap: wrap;
-  /* flex-direction: column; */
-  /* max-height: 600px; */
 }
 /* .tag-wrapper div:nth-child(n) ul li { */
 .search-tag-list__ingredients ul li,
@@ -154,6 +151,7 @@ i.fa-chevron-up {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-top: 110px;
 }
 .cards::after {
   content: "";
