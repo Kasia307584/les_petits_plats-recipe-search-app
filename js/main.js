@@ -460,12 +460,6 @@ inputAppliance.addEventListener("click", (e) => {
   createLiTags(extractIncludedTags("appliance"), divListAppliance);
   removeTagList(divListUstensils);
   removeTagList(divListIngredients);
-  // if (
-  //   document.querySelector(".search-tag-list__appliance ul").style.width <
-  //   "200px"
-  // ) {
-  //   buttonAppliance.classList.add("button-aligned-one");
-  // }
 });
 
 // register click event on the ustensils search input -> display ustensils tags (included in currently displayed recipes)
@@ -481,11 +475,6 @@ inputUstensil.addEventListener("click", (e) => {
     chevronToRemove(chevronIngredientsUp);
     chevronToDisplay(chevronIngredientsDown);
   }
-  // let button = document.querySelectorAll("button");
-  // console.log(button);
-  // button.addClassName("clicked-button");
-  // button.style.width = "400px";
-  // button.style["-webkit-background-size"] = "400px";
   createLiTags(extractIncludedTags("ustensils"), divListUstensils);
   removeTagList(divListAppliance);
   removeTagList(divListIngredients);
